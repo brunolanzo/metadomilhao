@@ -169,13 +169,33 @@ export default function FamilyPage() {
 
     if (err) {
       setInviteError('Erro ao enviar convite. Tente novamente.');
-    } else {
-      setInviteModalOpen(false);
-      setInviteEmail('');
-      setMessage('Convite enviado com sucesso!');
-      setTimeout(() => setMessage(''), 3000);
-      loadFamily();
+      setInviting(false);
+      return;
     }
+
+    // Send invite email
+    const currentMember = members.find((m) => m.user_id === currentUserId);
+    const invitedByName = currentMember?.profile?.name || '';
+
+    try {
+      await fetch('/api/send-invite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          familyName: family.name,
+          invitedByName,
+        }),
+      });
+    } catch {
+      // Email send failed silently — invite is still saved in DB
+    }
+
+    setInviteModalOpen(false);
+    setInviteEmail('');
+    setMessage(`Convite enviado para ${email}!`);
+    setTimeout(() => setMessage(''), 3000);
+    loadFamily();
 
     setInviting(false);
   }
