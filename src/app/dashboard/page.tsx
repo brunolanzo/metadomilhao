@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/card';
 import { formatCurrency, formatDate, getMonthRange, toLocalDateString } from '@/lib/utils';
-import { TrendingUp, TrendingDown, Wallet, ArrowLeftRight, CalendarDays, PiggyBank, Target, AlertTriangle } from 'lucide-react';
+import { TrendingUp, TrendingDown, Wallet, ArrowLeftRight, CalendarDays, PiggyBank, Target, AlertTriangle, Plus } from 'lucide-react';
+import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
 import type { Transaction, Category, Goal, CategoryBudget } from '@/types/database';
 
@@ -100,7 +101,7 @@ export default function DashboardPage() {
             });
           }
         });
-      setCategoryData(Array.from(catMap.values()));
+      setCategoryData(Array.from(catMap.values()).sort((a, b) => b.value - a.value));
     }
 
     // Year data (Jan 1 to Dec 31 of current year)
@@ -247,7 +248,16 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <Link
+          href="/dashboard/transactions?new=1"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-background font-semibold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+        >
+          <Plus size={18} />
+          Nova transação
+        </Link>
+      </div>
 
       {/* Monthly Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">

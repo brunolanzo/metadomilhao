@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,6 +17,16 @@ import type { Category, Transaction, TransactionType, FamilyMember, Profile } fr
 type RecurrenceMode = 'none' | 'recurring' | 'installment';
 
 export default function TransactionsPage() {
+  return (
+    <Suspense>
+      <TransactionsContent />
+    </Suspense>
+  );
+}
+
+function TransactionsContent() {
+  const searchParams = useSearchParams();
+  const autoOpenDone = useRef(false);
   const [transactions, setTransactions] = useState<(Transaction & { category: Category })[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,6 +73,14 @@ export default function TransactionsPage() {
   useEffect(() => {
     if (familyId) loadTransactions();
   }, [filterMonth, filterType, filterCategory, debouncedSearch, filterMember, familyId]);
+
+  // Auto-open create modal when coming from dashboard with ?new=1
+  useEffect(() => {
+    if (searchParams.get('new') === '1' && !autoOpenDone.current && categories.length > 0) {
+      autoOpenDone.current = true;
+      openCreate();
+    }
+  }, [categories, searchParams]);
 
   async function loadData() {
     const supabase = createClient();
