@@ -17,11 +17,16 @@ export function useCheckInvites() {
     if (!user?.email) return;
 
     // Check for pending invites for this user's email
-    const { data: invites } = await supabase
+    const { data: invites, error: invitesError } = await supabase
       .from('family_invites')
       .select('*, family:families(name)')
       .eq('email', user.email)
       .eq('status', 'pending');
+
+    if (invitesError) {
+      console.error('Error fetching invites:', invitesError);
+      return;
+    }
 
     if (!invites || invites.length === 0) return;
 
@@ -39,15 +44,20 @@ export function useCheckInvites() {
     if (memberships && memberships.length <= 1) {
       // Remove from current auto-created family
       if (memberships && memberships.length === 1) {
-        await supabase
+        const { error: deleteError } = await supabase
           .from('family_members')
           .delete()
           .eq('family_id', memberships[0].family_id)
           .eq('user_id', user.id);
+
+        if (deleteError) {
+          console.error('Error leaving auto-family:', deleteError);
+          return;
+        }
       }
 
       // Add to the inviting family
-      await supabase
+      const { error: insertError } = await supabase
         .from('family_members')
         .insert({
           family_id: invite.family_id,
@@ -55,11 +65,20 @@ export function useCheckInvites() {
           role: 'member',
         });
 
+      if (insertError) {
+        console.error('Error joining invited family:', insertError);
+        return;
+      }
+
       // Mark invite as accepted
-      await supabase
+      const { error: updateError } = await supabase
         .from('family_invites')
         .update({ status: 'accepted' })
         .eq('id', invite.id);
+
+      if (updateError) {
+        console.error('Error marking invite as accepted:', updateError);
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const familyName = (invite as any).family?.name || 'uma família';
