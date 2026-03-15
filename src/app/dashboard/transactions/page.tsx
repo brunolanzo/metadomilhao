@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { Modal } from '@/components/ui/modal';
 import { CurrencyInput } from '@/components/ui/currency-input';
-import { formatCurrency, formatDate, formatMonthLabel } from '@/lib/utils';
+import { formatCurrency, formatDate, formatMonthLabel, toLocalDateString } from '@/lib/utils';
 import { exportToPDF, exportToExcel } from '@/lib/export';
 import { Plus, Pencil, Trash2, ArrowUpCircle, ArrowDownCircle, Repeat, CreditCard, Search, FileText, FileSpreadsheet } from 'lucide-react';
 import type { Category, Transaction, TransactionType, FamilyMember, Profile } from '@/types/database';
@@ -40,7 +40,7 @@ export default function TransactionsPage() {
   // Form state (amount in cents)
   const [amountCents, setAmountCents] = useState(0);
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [date, setDate] = useState(() => toLocalDateString(new Date()));
   const [type, setType] = useState<TransactionType>('expense');
   const [categoryId, setCategoryId] = useState('');
   const [saving, setSaving] = useState(false);
@@ -104,8 +104,8 @@ export default function TransactionsPage() {
     const supabase = createClient();
 
     const [year, month] = filterMonth.split('-').map(Number);
-    const start = new Date(year, month - 1, 1).toISOString().split('T')[0];
-    const end = new Date(year, month, 0).toISOString().split('T')[0];
+    const start = toLocalDateString(new Date(year, month - 1, 1));
+    const end = toLocalDateString(new Date(year, month, 0));
 
     let query = supabase
       .from('transactions')
@@ -140,7 +140,7 @@ export default function TransactionsPage() {
     setEditing(null);
     setAmountCents(0);
     setDescription('');
-    setDate(new Date().toISOString().split('T')[0]);
+    setDate(toLocalDateString(new Date()));
     setType('expense');
     setCategoryId(categories.find((c) => c.type === 'expense')?.id || '');
     setRecurrenceMode('none');
@@ -170,7 +170,7 @@ export default function TransactionsPage() {
   function addMonths(dateStr: string, months: number): string {
     const d = new Date(dateStr + 'T12:00:00');
     d.setMonth(d.getMonth() + months);
-    return d.toISOString().split('T')[0];
+    return toLocalDateString(d);
   }
 
   async function handleSave(e: React.FormEvent) {

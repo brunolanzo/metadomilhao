@@ -137,8 +137,8 @@ export function NotificationBell() {
     const today = new Date();
     const threeDaysLater = new Date(today);
     threeDaysLater.setDate(today.getDate() + 3);
-    const todayStr = today.toISOString().split('T')[0];
-    const futureStr = threeDaysLater.toISOString().split('T')[0];
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const futureStr = `${threeDaysLater.getFullYear()}-${String(threeDaysLater.getMonth() + 1).padStart(2, '0')}-${String(threeDaysLater.getDate()).padStart(2, '0')}`;
 
     const { data: upcoming } = await supabase
       .from('transactions')

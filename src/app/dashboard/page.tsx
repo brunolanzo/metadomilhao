@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/card';
-import { formatCurrency, formatDate, getMonthRange } from '@/lib/utils';
+import { formatCurrency, formatDate, getMonthRange, toLocalDateString } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Wallet, ArrowLeftRight, CalendarDays, PiggyBank, Target, AlertTriangle } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
 import type { Transaction, Category, Goal, CategoryBudget } from '@/types/database';
@@ -160,8 +160,8 @@ export default function DashboardPage() {
     // Load previous month data for comparison
     const prevMonth = new Date();
     prevMonth.setMonth(prevMonth.getMonth() - 1);
-    const prevStart = new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1).toISOString().split('T')[0];
-    const prevEnd = new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1, 0).toISOString().split('T')[0];
+    const prevStart = toLocalDateString(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
+    const prevEnd = toLocalDateString(new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1, 0));
 
     const { data: prevTxs } = await supabase
       .from('transactions')

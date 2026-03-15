@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Modal } from '@/components/ui/modal';
 import { CurrencyInput } from '@/components/ui/currency-input';
-import { formatCurrency, formatMonthLabel } from '@/lib/utils';
+import { formatCurrency, formatMonthLabel, toLocalDateString } from '@/lib/utils';
 import { Plus, Pencil, Trash2, Target, TrendingUp } from 'lucide-react';
 import type { Goal } from '@/types/database';
 
@@ -71,8 +71,8 @@ export default function GoalsPage() {
     const goalsWithProgress: GoalWithProgress[] = await Promise.all(
       goalsData.map(async (goal) => {
         const [year, month] = goal.month.split('-').map(Number);
-        const start = new Date(year, month - 1, 1).toISOString().split('T')[0];
-        const end = new Date(year, month, 0).toISOString().split('T')[0];
+        const start = toLocalDateString(new Date(year, month - 1, 1));
+        const end = toLocalDateString(new Date(year, month, 0));
 
         const { data: txs } = await supabase
           .from('transactions')
