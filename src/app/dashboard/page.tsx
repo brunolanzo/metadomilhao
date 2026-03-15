@@ -393,8 +393,8 @@ export default function DashboardPage() {
                   }}
                   formatter={(value) => formatCurrency(Number(value))}
                 />
-                <Bar dataKey="income" fill="#22C55E" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="expense" fill="#EF4444" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="income" name="Receitas" fill="#22C55E" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="expense" name="Despesas" fill="#EF4444" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
