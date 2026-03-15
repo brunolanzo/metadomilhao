@@ -79,15 +79,22 @@ export default function FamilyPage() {
       setFamilyName(familyData.name);
     }
 
-    // Get all members with profiles
-    const { data: membersData } = await supabase
-      .from('family_members')
-      .select('*, profile:profiles(*)')
-      .eq('family_id', membership.family_id)
-      .order('created_at');
+    // Get all members with profiles via SECURITY DEFINER function
+    const { data: membersData } = await supabase.rpc('get_family_members');
 
     if (membersData) {
-      setMembers(membersData as (FamilyMember & { profile: Profile })[]);
+      const mapped = membersData.map((m: { id: string; family_id: string; user_id: string; role: string; created_at: string; profile_name: string; profile_email: string }) => ({
+        id: m.id,
+        family_id: m.family_id,
+        user_id: m.user_id,
+        role: m.role,
+        created_at: m.created_at,
+        profile: {
+          name: m.profile_name,
+          email: m.profile_email,
+        },
+      }));
+      setMembers(mapped as (FamilyMember & { profile: Profile })[]);
     }
 
     // Get pending invites
