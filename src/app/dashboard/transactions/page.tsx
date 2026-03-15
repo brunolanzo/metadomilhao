@@ -65,9 +65,13 @@ export default function TransactionsPage() {
 
   async function loadData() {
     const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setLoading(false); return; }
+
     const { data: membership } = await supabase
       .from('family_members')
       .select('family_id')
+      .eq('user_id', user.id)
       .single();
 
     if (!membership) {

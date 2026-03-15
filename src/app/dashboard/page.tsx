@@ -46,9 +46,13 @@ export default function DashboardPage() {
     const { start, end } = getMonthRange();
 
     // Get user's family
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setLoading(false); return; }
+
     const { data: membership } = await supabase
       .from('family_members')
       .select('family_id')
+      .eq('user_id', user.id)
       .single();
 
     if (!membership) {
