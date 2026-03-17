@@ -171,7 +171,7 @@ function TransactionsContent() {
     setEditing(t);
     setAmountCents(Math.round(Number(t.amount) * 100));
     setDescription(t.description);
-    setDate(t.date);
+    setDate(t.date.substring(0, 10));
     setType(t.type);
     setCategoryId(t.category_id);
     // Determine recurrence mode from existing data
