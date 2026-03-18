@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, PieChart, Tags, Users } from 'lucide-react';
+import { ArrowRight, PieChart, Tags, Users, BadgeCheck, ShieldCheck } from 'lucide-react';
 import { Footer } from '@/components/layout/footer';
 
 export default function Home() {
@@ -52,8 +52,20 @@ export default function Home() {
             <ArrowRight size={20} />
           </Link>
 
+          {/* Trust badges */}
+          <div className="mt-12 flex items-center justify-center gap-8 sm:gap-12">
+            <div className="flex items-center gap-2">
+              <BadgeCheck size={22} className="text-success" strokeWidth={1.5} />
+              <span className="text-sm font-medium text-foreground">100% Gratuito</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <ShieldCheck size={22} className="text-success" strokeWidth={1.5} />
+              <span className="text-sm font-medium text-foreground">Seguro</span>
+            </div>
+          </div>
+
           {/* Features */}
-          <div className="mt-20 grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
             <div className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Tags size={24} className="text-primary" strokeWidth={1.5} />
