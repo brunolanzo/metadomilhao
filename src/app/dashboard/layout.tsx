@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
+import { Footer } from '@/components/layout/footer';
 import { NotificationBell } from '@/components/notifications';
 import { useCheckInvites } from '@/lib/hooks/use-check-invites';
 import { Menu, Check } from 'lucide-react';
@@ -51,6 +52,7 @@ export default function DashboardLayout({
         <main className="flex-1 p-4 md:p-8 overflow-auto">
           {children}
         </main>
+        <Footer />
       </div>
     </div>
   );

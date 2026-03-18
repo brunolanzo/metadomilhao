@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { ArrowRight, PieChart, Tags, Users } from 'lucide-react';
+import { Footer } from '@/components/layout/footer';
 
 export default function Home() {
   return (
@@ -77,6 +78,7 @@ export default function Home() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
