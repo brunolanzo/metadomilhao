@@ -27,7 +27,7 @@ export function DonationBanner() {
           </p>
           <button
             onClick={() => setModalOpen(true)}
-            className="ml-2 shrink-0 px-3 py-1 bg-black text-primary font-bold text-xs rounded-full hover:bg-black/80 transition-colors cursor-pointer"
+            className="ml-2 shrink-0 px-5 py-2 bg-black text-primary font-bold text-sm rounded-full hover:bg-black/80 transition-colors cursor-pointer"
           >
             Doar via PIX
           </button>
