@@ -18,7 +18,7 @@ export function DonationBanner() {
   return (
     <>
       {/* Fixed banner */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-primary/90 via-yellow-500/90 to-primary/90 backdrop-blur-sm shadow-lg">
+      <div className="fixed top-0 left-0 right-0 z-[60] bg-gradient-to-r from-primary/90 via-yellow-500/90 to-primary/90 backdrop-blur-sm shadow-lg">
         <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-center gap-2 text-center">
           <Heart size={16} className="text-red-600 shrink-0 fill-red-600 animate-pulse" />
           <p className="text-black text-sm font-medium">
@@ -35,11 +35,11 @@ export function DonationBanner() {
       </div>
 
       {/* Spacer to push content below the fixed banner */}
-      <div className="h-10" />
+      <div className="h-11" />
 
       {/* Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setModalOpen(false)} />
           <div className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in-95">
             {/* Close */}

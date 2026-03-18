@@ -57,9 +57,9 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'w-64 border-r border-border min-h-screen flex flex-col bg-background z-50',
+          'w-64 border-r border-border h-screen flex flex-col bg-background z-50',
           // Mobile: fixed overlay with slide transition
-          'fixed inset-y-0 left-0 transform transition-transform duration-200 ease-in-out md:relative md:translate-x-0',
+          'fixed inset-y-0 left-0 transform transition-transform duration-200 ease-in-out md:sticky md:top-0 md:translate-x-0',
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
