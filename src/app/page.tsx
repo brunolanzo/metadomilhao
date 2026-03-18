@@ -33,7 +33,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <main className="flex-1 flex items-center justify-center px-6">
+      <main className="flex items-center justify-center px-6 py-16">
         <div className="max-w-2xl text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
             Controle financeiro
