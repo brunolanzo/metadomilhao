@@ -261,40 +261,46 @@ export default function DashboardPage() {
 
       {/* Monthly Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-            <Wallet size={24} className="text-primary" strokeWidth={1.5} />
-          </div>
-          <div>
-            <p className="text-sm text-muted">Saldo do mês</p>
-            <p className={`text-xl font-bold ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
-              {formatCurrency(balance)}
-            </p>
-            {compareLabel(balance, prevBalance)}
-          </div>
-        </Card>
+        <Link href="/dashboard/transactions">
+          <Card className="flex items-center gap-4 cursor-pointer hover:border-primary/30 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+              <Wallet size={24} className="text-primary" strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-sm text-muted">Saldo do mês</p>
+              <p className={`text-xl font-bold ${balance >= 0 ? 'text-success' : 'text-danger'}`}>
+                {formatCurrency(balance)}
+              </p>
+              {compareLabel(balance, prevBalance)}
+            </div>
+          </Card>
+        </Link>
 
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
-            <TrendingUp size={24} className="text-success" strokeWidth={1.5} />
-          </div>
-          <div>
-            <p className="text-sm text-muted">Receitas do mês</p>
-            <p className="text-xl font-bold text-success">{formatCurrency(income)}</p>
-            {compareLabel(income, prevIncome)}
-          </div>
-        </Card>
+        <Link href="/dashboard/transactions">
+          <Card className="flex items-center gap-4 cursor-pointer hover:border-primary/30 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+              <TrendingUp size={24} className="text-success" strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-sm text-muted">Receitas do mês</p>
+              <p className="text-xl font-bold text-success">{formatCurrency(income)}</p>
+              {compareLabel(income, prevIncome)}
+            </div>
+          </Card>
+        </Link>
 
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg bg-danger/10 flex items-center justify-center shrink-0">
-            <TrendingDown size={24} className="text-danger" strokeWidth={1.5} />
-          </div>
-          <div>
-            <p className="text-sm text-muted">Despesas do mês</p>
-            <p className="text-xl font-bold text-danger">{formatCurrency(expense)}</p>
-            {compareLabel(expense, prevExpense)}
-          </div>
-        </Card>
+        <Link href="/dashboard/transactions">
+          <Card className="flex items-center gap-4 cursor-pointer hover:border-primary/30 transition-colors">
+            <div className="w-12 h-12 rounded-lg bg-danger/10 flex items-center justify-center shrink-0">
+              <TrendingDown size={24} className="text-danger" strokeWidth={1.5} />
+            </div>
+            <div>
+              <p className="text-sm text-muted">Despesas do mês</p>
+              <p className="text-xl font-bold text-danger">{formatCurrency(expense)}</p>
+              {compareLabel(expense, prevExpense)}
+            </div>
+          </Card>
+        </Link>
       </div>
 
       {/* Annual + Savings Cards */}
