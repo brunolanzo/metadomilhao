@@ -65,7 +65,7 @@ export function DonationBanner() {
             <div className="bg-background rounded-xl p-4 mb-4">
               <p className="text-xs text-muted mb-1 text-center">Chave PIX (e-mail)</p>
               <div className="flex items-center gap-2 justify-center">
-                <code className="text-foreground font-mono text-sm bg-card px-3 py-2 rounded-lg border border-border flex-1 text-center">
+                <code className="text-foreground font-mono text-sm bg-card px-3 py-2 rounded-lg border border-border text-center">
                   {pixKey}
                 </code>
                 <button
@@ -86,7 +86,7 @@ export function DonationBanner() {
 
             {/* Motivational message */}
             <p className="text-center text-sm text-muted mb-6">
-              Qualquer valor faz a diferença. Obrigado por acreditar neste projeto!
+              Qualquer valor faz a diferença.<br />Obrigado por acreditar neste projeto!
             </p>
 
             {/* Support link */}
