@@ -44,6 +44,13 @@ export default function RegisterPage() {
       return;
     }
 
+    // Notify admin of new signup (fire and forget)
+    fetch('/api/notify-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userName: name, userEmail: email }),
+    }).catch(() => {});
+
     // If session exists, user is logged in (email confirmation disabled)
     if (data.session) {
       router.push('/dashboard');
