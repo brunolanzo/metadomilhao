@@ -22,6 +22,8 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
   const [transactions, setTransactions] = useState<ParsedTransaction[]>([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
   const [defaultCategory, setDefaultCategory] = useState('');
+  const [dateMode, setDateMode] = useState<'original' | 'billing'>('original');
+  const [billingMonth, setBillingMonth] = useState('');
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState({ imported: 0, skipped: 0 });
   const [error, setError] = useState('');
@@ -112,13 +114,20 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
         continue;
       }
 
+      // If billing mode, override the date to the selected billing month (keep the day)
+      let finalDate = t.date;
+      if (dateMode === 'billing' && billingMonth) {
+        const day = t.date.split('-')[2];
+        finalDate = `${billingMonth}-${day}`;
+      }
+
       batch.push({
         family_id: familyId,
         user_id: user.id,
         category_id: catId,
         amount: t.amount,
         description: t.description,
-        date: t.date,
+        date: finalDate,
         type: t.type,
       });
     }
@@ -143,6 +152,8 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
     setTransactions([]);
     setCategoryMap({});
     setDefaultCategory('');
+    setDateMode('original');
+    setBillingMonth('');
     setError('');
     setResult({ imported: 0, skipped: 0 });
     if (fileRef.current) fileRef.current.value = '';
@@ -219,6 +230,48 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
                   ))}
                 </select>
                 <p className="text-xs text-muted mt-1">Todas as despesas sem categoria individual usarão esta categoria.</p>
+              </Card>
+
+              {/* Date mode selector */}
+              <Card className="p-4">
+                <label className="block text-sm font-medium mb-3">Quando registrar estas transações?</label>
+                <div className="flex gap-2 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setDateMode('original')}
+                    className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                      dateMode === 'original'
+                        ? 'bg-primary/10 text-primary border border-primary/30'
+                        : 'bg-background border border-border text-muted hover:text-foreground'
+                    }`}
+                  >
+                    Data original
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDateMode('billing')}
+                    className={`flex-1 py-2.5 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                      dateMode === 'billing'
+                        ? 'bg-primary/10 text-primary border border-primary/30'
+                        : 'bg-background border border-border text-muted hover:text-foreground'
+                    }`}
+                  >
+                    Mês de pagamento
+                  </button>
+                </div>
+                {dateMode === 'original' ? (
+                  <p className="text-xs text-muted">Cada transação será registrada na data em que foi realizada, conforme consta no extrato.</p>
+                ) : (
+                  <div>
+                    <p className="text-xs text-muted mb-2">Todas as transações serão registradas no mês em que a fatura será paga. Ideal para cartão de crédito.</p>
+                    <input
+                      type="month"
+                      value={billingMonth}
+                      onChange={(e) => setBillingMonth(e.target.value)}
+                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                )}
               </Card>
 
               {/* Summary */}
@@ -322,7 +375,7 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
               </button>
               <button
                 onClick={handleImport}
-                disabled={importing || selectedCount === 0 || (!defaultCategory && Object.keys(categoryMap).length === 0)}
+                disabled={importing || selectedCount === 0 || (!defaultCategory && Object.keys(categoryMap).length === 0) || (dateMode === 'billing' && !billingMonth)}
                 className="flex-1 py-2.5 rounded-lg bg-primary text-black text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {importing ? 'Importando...' : `Importar ${selectedCount} transações`}
