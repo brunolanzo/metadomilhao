@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
@@ -13,7 +14,10 @@ import {
   Settings,
   LogOut,
   X,
+  ShieldCheck,
 } from 'lucide-react';
+
+const ADMIN_EMAIL = 'admin.metadomilhao@gmail.com';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -32,6 +36,16 @@ interface SidebarProps {
 export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    async function checkAdmin() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user?.email === ADMIN_EMAIL) setIsAdmin(true);
+    }
+    checkAdmin();
+  }, []);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -105,6 +119,23 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 </li>
               );
             })}
+            {isAdmin && (
+              <li>
+                <Link
+                  href="/dashboard/admin"
+                  onClick={handleNavClick}
+                  className={cn(
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
+                    pathname.startsWith('/dashboard/admin')
+                      ? 'bg-primary/10 text-primary'
+                      : 'text-muted hover:text-foreground hover:bg-card'
+                  )}
+                >
+                  <ShieldCheck size={20} strokeWidth={1.5} />
+                  Admin
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
 

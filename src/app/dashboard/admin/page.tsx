@@ -1,0 +1,242 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { createClient } from '@/lib/supabase/client';
+import { Card } from '@/components/ui/card';
+import { ShieldCheck, Users, Home, ArrowLeftRight, UserPlus, Calendar, CalendarDays } from 'lucide-react';
+
+interface Stats {
+  total_users: number;
+  total_families: number;
+  total_transactions: number;
+  new_users_today: number;
+  new_users_week: number;
+  new_users_month: number;
+}
+
+interface RecentUser {
+  user_id: string;
+  name: string;
+  email: string;
+  created_at: string;
+}
+
+interface FamilyRow {
+  family_id: string;
+  family_name: string;
+  member_count: number;
+  created_at: string;
+}
+
+export default function AdminPage() {
+  const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const [stats, setStats] = useState<Stats | null>(null);
+  const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
+  const [families, setFamilies] = useState<FamilyRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadAdmin();
+  }, []);
+
+  async function loadAdmin() {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user || user.email !== 'admin.metadomilhao@gmail.com') {
+      setAuthorized(false);
+      setLoading(false);
+      return;
+    }
+
+    setAuthorized(true);
+
+    // Load stats
+    const { data: statsData, error: statsError } = await supabase.rpc('admin_get_stats');
+    if (!statsError && statsData) {
+      setStats(statsData as Stats);
+    }
+
+    // Load recent users
+    const { data: usersData, error: usersError } = await supabase.rpc('admin_get_recent_users', { lim: 20 });
+    if (!usersError && usersData) {
+      setRecentUsers(usersData as RecentUser[]);
+    }
+
+    // Load families
+    const { data: familiesData, error: familiesError } = await supabase.rpc('admin_get_families', { lim: 50 });
+    if (!familiesError && familiesData) {
+      setFamilies(familiesData as FamilyRow[]);
+    }
+
+    setLoading(false);
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <ShieldCheck size={48} className="text-danger" strokeWidth={1.5} />
+        <h1 className="text-xl font-bold">Acesso negado</h1>
+        <p className="text-muted text-sm">Você não tem permissão para acessar esta página.</p>
+      </div>
+    );
+  }
+
+  function formatDateTime(dateStr: string) {
+    return new Date(dateStr).toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-6">
+        <ShieldCheck size={28} className="text-primary" strokeWidth={1.5} />
+        <h1 className="text-2xl font-bold">Painel Administrativo</h1>
+      </div>
+
+      {/* Metric Cards */}
+      {stats && (
+        <>
+          <h2 className="text-sm font-medium text-muted mb-3">Visão geral da plataforma</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Users size={24} className="text-primary" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Total de usuários</p>
+                <p className="text-xl font-bold">{stats.total_users}</p>
+              </div>
+            </Card>
+
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+                <Home size={24} className="text-success" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Total de famílias</p>
+                <p className="text-xl font-bold">{stats.total_families}</p>
+              </div>
+            </Card>
+
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <ArrowLeftRight size={24} className="text-primary" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Total de transações</p>
+                <p className="text-xl font-bold">{stats.total_transactions}</p>
+              </div>
+            </Card>
+
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+                <UserPlus size={24} className="text-success" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Novos usuários hoje</p>
+                <p className="text-xl font-bold">{stats.new_users_today}</p>
+              </div>
+            </Card>
+
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <Calendar size={24} className="text-primary" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Novos esta semana</p>
+                <p className="text-xl font-bold">{stats.new_users_week}</p>
+              </div>
+            </Card>
+
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                <CalendarDays size={24} className="text-primary" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Novos este mês</p>
+                <p className="text-xl font-bold">{stats.new_users_month}</p>
+              </div>
+            </Card>
+          </div>
+        </>
+      )}
+
+      {/* Recent Users */}
+      <Card className="mb-6">
+        <h2 className="text-sm font-medium text-muted mb-4">Últimos usuários cadastrados</h2>
+        {recentUsers.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="pb-3 font-medium text-muted">Nome</th>
+                  <th className="pb-3 font-medium text-muted">Email</th>
+                  <th className="pb-3 font-medium text-muted">Cadastro</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {recentUsers.map((u) => (
+                  <tr key={u.user_id}>
+                    <td className="py-3 font-medium">{u.name}</td>
+                    <td className="py-3 text-muted">{u.email}</td>
+                    <td className="py-3 text-muted">{formatDateTime(u.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-muted text-center py-8">Nenhum usuário encontrado</p>
+        )}
+      </Card>
+
+      {/* Families */}
+      <Card>
+        <h2 className="text-sm font-medium text-muted mb-4">Famílias</h2>
+        {families.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="pb-3 font-medium text-muted">Nome da família</th>
+                  <th className="pb-3 font-medium text-muted">Membros</th>
+                  <th className="pb-3 font-medium text-muted">Criada em</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {families.map((f) => (
+                  <tr key={f.family_id}>
+                    <td className="py-3 font-medium">{f.family_name}</td>
+                    <td className="py-3">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                        <Users size={12} />
+                        {f.member_count}
+                      </span>
+                    </td>
+                    <td className="py-3 text-muted">{formatDateTime(f.created_at)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-sm text-muted text-center py-8">Nenhuma família encontrada</p>
+        )}
+      </Card>
+    </div>
+  );
+}
