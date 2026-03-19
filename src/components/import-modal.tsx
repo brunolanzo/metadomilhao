@@ -64,6 +64,13 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
       }
 
       setTransactions(parsed);
+
+      // Set billing month to the most recent transaction date
+      if (parsed.length > 0) {
+        const mostRecent = parsed.reduce((latest, t) => t.date > latest ? t.date : latest, parsed[0].date);
+        setBillingMonth(mostRecent.substring(0, 7));
+      }
+
       setStep('preview');
     };
     reader.readAsText(file, 'UTF-8');
@@ -267,12 +274,23 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
                 ) : (
                   <div>
                     <p className="text-xs text-muted mb-2">Todas as transações serão registradas no mês em que a fatura será paga. Ideal para cartão de crédito.</p>
-                    <input
-                      type="month"
+                    <select
                       value={billingMonth}
                       onChange={(e) => setBillingMonth(e.target.value)}
                       className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm"
-                    />
+                    >
+                      {(() => {
+                        const options = [];
+                        const now = new Date();
+                        for (let i = -6; i <= 6; i++) {
+                          const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+                          const val = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+                          const label = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(d);
+                          options.push(<option key={val} value={val}>{label.charAt(0).toUpperCase() + label.slice(1)}</option>);
+                        }
+                        return options;
+                      })()}
+                    </select>
                   </div>
                 )}
               </Card>
