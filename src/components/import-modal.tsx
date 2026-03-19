@@ -23,7 +23,10 @@ export function ImportModal({ isOpen, onClose, categories, familyId, onImported 
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
   const [defaultCategory, setDefaultCategory] = useState('');
   const [dateMode, setDateMode] = useState<'original' | 'billing'>('original');
-  const [billingMonth, setBillingMonth] = useState('');
+  const [billingMonth, setBillingMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  });
   const [importing, setImporting] = useState(false);
   const [result, setResult] = useState({ imported: 0, skipped: 0 });
   const [error, setError] = useState('');
