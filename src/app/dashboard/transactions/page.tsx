@@ -132,7 +132,8 @@ function TransactionsContent() {
       .eq('family_id', familyId)
       .gte('date', start)
       .lte('date', end)
-      .order('date', { ascending: false });
+      .order('date', { ascending: false })
+      .order('created_at', { ascending: false });
 
     if (filterType !== 'all') {
       query = query.eq('type', filterType);
