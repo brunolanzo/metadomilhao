@@ -11,7 +11,8 @@ import { Modal } from '@/components/ui/modal';
 import { CurrencyInput } from '@/components/ui/currency-input';
 import { formatCurrency, formatDate, formatMonthLabel, toLocalDateString } from '@/lib/utils';
 import { exportToPDF, exportToExcel } from '@/lib/export';
-import { Plus, Pencil, Trash2, ArrowUpCircle, ArrowDownCircle, Repeat, CreditCard, Search, FileText, FileSpreadsheet } from 'lucide-react';
+import { ImportModal } from '@/components/import-modal';
+import { Plus, Pencil, Trash2, ArrowUpCircle, ArrowDownCircle, Repeat, CreditCard, Search, FileText, FileSpreadsheet, Upload } from 'lucide-react';
 import type { Category, Transaction, TransactionType, FamilyMember, Profile } from '@/types/database';
 
 type RecurrenceMode = 'none' | 'recurring' | 'installment';
@@ -35,6 +36,7 @@ function TransactionsContent() {
   const [editing, setEditing] = useState<Transaction | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [deleteMode, setDeleteMode] = useState<'single' | 'all'>('single');
+  const [importModalOpen, setImportModalOpen] = useState(false);
 
   // Filters
   const [filterMonth, setFilterMonth] = useState(() => {
@@ -380,6 +382,13 @@ function TransactionsContent() {
             title="Exportar Excel"
           >
             <FileSpreadsheet size={18} strokeWidth={1.5} />
+          </button>
+          <button
+            onClick={() => setImportModalOpen(true)}
+            className="p-2 text-muted hover:text-foreground transition-colors cursor-pointer"
+            title="Importar extrato"
+          >
+            <Upload size={18} strokeWidth={1.5} />
           </button>
           <Button onClick={openCreate} size="sm">
             <Plus size={18} />
@@ -809,6 +818,14 @@ function TransactionsContent() {
           </>
         )}
       </Modal>
+
+      <ImportModal
+        isOpen={importModalOpen}
+        onClose={() => setImportModalOpen(false)}
+        categories={categories}
+        familyId={familyId}
+        onImported={loadTransactions}
+      />
     </div>
   );
 }
