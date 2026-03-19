@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Sidebar } from '@/components/layout/sidebar';
 import { Footer } from '@/components/layout/footer';
 import { NotificationBell } from '@/components/notifications';
+import { Onboarding } from '@/components/onboarding';
 import { useCheckInvites } from '@/lib/hooks/use-check-invites';
 import { Menu, Check } from 'lucide-react';
 
@@ -53,6 +54,7 @@ export default function DashboardLayout({
           {children}
         </main>
         <Footer />
+        <Onboarding />
       </div>
     </div>
   );
