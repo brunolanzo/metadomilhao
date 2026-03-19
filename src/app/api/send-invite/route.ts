@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
   const { error } = await resend.emails.send({
-    from: 'Meta do Milhão <onboarding@resend.dev>',
+    from: 'Meta do Milhão <noreply@metadomilhao.com.br>',
     to: email,
     subject: `Você foi convidado para a família "${familyName}" no Meta do Milhão`,
     html: `

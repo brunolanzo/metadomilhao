@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
   try {
     await resend.emails.send({
-      from: 'Meta do Milhão <onboarding@resend.dev>',
+      from: 'Meta do Milhão <noreply@metadomilhao.com.br>',
       to: ADMIN_EMAIL,
       subject: `Novo cadastro: ${userName}`,
       html: `
