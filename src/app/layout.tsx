@@ -94,6 +94,10 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "Meta do Milhão",
   },
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/icons/icon-192.svg",
+  },
   category: "finance",
 };
 
