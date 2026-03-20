@@ -339,28 +339,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About Section */}
-      <section className="px-6 py-16">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold mb-6">Sobre o Projeto</h2>
-          <p className="text-muted leading-relaxed mb-4">
-            O Meta do Milhão nasceu de uma necessidade pessoal: organizar as finanças da família de forma simples, sem planilhas complicadas e sem pagar por ferramentas caras.
-          </p>
-          <p className="text-muted leading-relaxed mb-8">
-            Criado por <span className="text-foreground font-medium">Bruno Lanzo</span>, o projeto tem como missão democratizar o controle financeiro, oferecendo uma ferramenta 100% gratuita que ajuda famílias a entenderem para onde vai o dinheiro, definirem metas e construírem um futuro financeiro mais seguro.
-          </p>
-          <Link
-            href="/sobre"
-            className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm"
-          >
-            Conheça a história completa
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-      </section>
-
       {/* Testimonials Section */}
-      <section className="px-6 py-16 bg-card/30">
+      <section className="px-6 py-16">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">O que dizem nossos usuários</h2>
           <p className="text-muted text-center mb-12 max-w-lg mx-auto">Histórias reais de pessoas que transformaram sua vida financeira com o Meta do Milhão.</p>
@@ -440,6 +420,26 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* About Section */}
+      <section className="px-6 py-16 bg-card/30">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6">Sobre o Projeto</h2>
+          <p className="text-muted leading-relaxed mb-4">
+            O Meta do Milhão nasceu de uma necessidade pessoal: organizar as finanças da família de forma simples, sem planilhas complicadas e sem pagar por ferramentas caras.
+          </p>
+          <p className="text-muted leading-relaxed mb-8">
+            Criado por <span className="text-foreground font-medium">Bruno Lanzo</span>, o projeto tem como missão democratizar o controle financeiro, oferecendo uma ferramenta 100% gratuita que ajuda famílias a entenderem para onde vai o dinheiro, definirem metas e construírem um futuro financeiro mais seguro.
+          </p>
+          <Link
+            href="/sobre"
+            className="inline-flex items-center gap-2 text-primary hover:underline font-medium text-sm"
+          >
+            Conheça a história completa
+            <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
 
