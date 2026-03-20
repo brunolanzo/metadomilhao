@@ -2,9 +2,36 @@ import Link from 'next/link';
 import { ArrowRight, PieChart, Tags, Users, BadgeCheck, ShieldCheck, LayoutDashboard, ArrowLeftRight, TrendingUp, TrendingDown, Wallet, Target } from 'lucide-react';
 import { Footer } from '@/components/layout/footer';
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Meta do Milhão',
+  url: 'https://metadomilhao.com.br',
+  description: 'Controle financeiro familiar 100% gratuito. Gerencie gastos, receitas, orçamentos e metas da sua família com dashboard, gráficos e categorias personalizáveis.',
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'BRL',
+  },
+  author: {
+    '@type': 'Person',
+    name: 'Bruno Lanzo',
+  },
+  inLanguage: 'pt-BR',
+  browserRequirements: 'Requires JavaScript',
+  softwareVersion: '1.0',
+  aggregateRating: undefined,
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Header */}
       <header className="border-b border-border px-6 py-6 mt-2">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
