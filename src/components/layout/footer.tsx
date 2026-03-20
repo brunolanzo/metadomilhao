@@ -17,7 +17,10 @@ export function Footer() {
           </div>
 
           {/* Links */}
-          <nav className="flex items-center gap-6 text-sm">
+          <nav className="flex items-center gap-4 sm:gap-6 text-sm flex-wrap justify-center">
+            <Link href="/sobre" className="text-muted hover:text-foreground transition-colors">
+              Sobre o Projeto
+            </Link>
             <Link href="/termos" className="text-muted hover:text-foreground transition-colors">
               Termos e Condições
             </Link>
