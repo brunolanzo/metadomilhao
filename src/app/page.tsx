@@ -352,36 +352,42 @@ export default function Home() {
                 role: 'Planejadora Financeira, CFP',
                 quote: 'Recomendo o Meta do Milhão para todos os meus clientes que estão começando a organizar as finanças. A interface é intuitiva e o fato de ser gratuito remove qualquer barreira de entrada.',
                 stars: 5,
+                img: 'https://i.pravatar.cc/80?img=47',
               },
               {
                 name: 'Ricardo Santos',
                 role: 'Pai de família, São Paulo',
                 quote: 'Pela primeira vez eu e minha esposa conseguimos enxergar para onde o dinheiro vai no mês. O controle por categorias mudou completamente nossa forma de lidar com as despesas de casa.',
                 stars: 5,
+                img: 'https://i.pravatar.cc/80?img=12',
               },
               {
                 name: 'Camila Rodrigues',
                 role: 'Educadora Financeira',
                 quote: 'É raro encontrar uma ferramenta tão completa sendo oferecida de forma totalmente gratuita. O dashboard visual facilita muito a compreensão dos alunos em meus cursos de educação financeira.',
                 stars: 5,
+                img: 'https://i.pravatar.cc/80?img=23',
               },
               {
                 name: 'Marcos Almeida',
                 role: 'Autônomo, Belo Horizonte',
                 quote: 'Como freelancer, minha renda varia bastante. O Meta do Milhão me ajudou a ter uma visão clara do meu fluxo mensal e a me planejar melhor para os meses mais fracos.',
                 stars: 5,
+                img: 'https://i.pravatar.cc/80?img=53',
               },
               {
                 name: 'Juliana Costa',
                 role: 'Mãe e empreendedora, Recife',
                 quote: 'A importação de extratos bancários economiza um tempo absurdo. Antes eu gastava horas lançando tudo manualmente. Agora em segundos está tudo categorizado e organizado.',
                 stars: 5,
+                img: 'https://i.pravatar.cc/80?img=44',
               },
               {
                 name: 'André Mendes',
                 role: 'Consultor Financeiro',
                 quote: 'O recurso de perfil familiar é um diferencial enorme. Muitos apps no mercado não pensam na família como unidade financeira. Aqui, todos acompanham as metas juntos.',
                 stars: 4,
+                img: 'https://i.pravatar.cc/80?img=59',
               },
             ].map((t, i) => (
               <div key={i} className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors flex flex-col">
@@ -400,9 +406,12 @@ export default function Home() {
                   <p className="text-sm text-muted leading-relaxed">{t.quote}</p>
                 </div>
                 <div className="flex items-center gap-3 pt-4 border-t border-border">
-                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                    <span className="text-sm font-bold text-primary">{t.name[0]}</span>
-                  </div>
+                  <img
+                    src={t.img}
+                    alt={t.name}
+                    className="w-10 h-10 rounded-full object-cover"
+                    loading="lazy"
+                  />
                   <div>
                     <p className="text-sm font-semibold">{t.name}</p>
                     <p className="text-xs text-muted">{t.role}</p>
