@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, PieChart, Tags, Users, BadgeCheck, ShieldCheck, LayoutDashboard, ArrowLeftRight, TrendingUp, TrendingDown, Wallet, Target } from 'lucide-react';
+import { ArrowRight, PieChart, Tags, Users, BadgeCheck, ShieldCheck, LayoutDashboard, ArrowLeftRight, TrendingUp, TrendingDown, Wallet, Target, Upload, FileSpreadsheet, FileText } from 'lucide-react';
 import { Footer } from '@/components/layout/footer';
 
 const jsonLd = {
@@ -92,7 +92,7 @@ export default function Home() {
           </div>
 
           {/* Features */}
-          <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-8">
             <div className="flex flex-col items-center gap-3">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Tags size={24} className="text-primary" strokeWidth={1.5} />
@@ -114,6 +114,13 @@ export default function Home() {
               <h3 className="font-medium">Em família</h3>
               <p className="text-sm text-muted">Compartilhe o controle financeiro com todos os membros da família.</p>
             </div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Upload size={24} className="text-primary" strokeWidth={1.5} />
+              </div>
+              <h3 className="font-medium">Importação fácil</h3>
+              <p className="text-sm text-muted">Importe extratos do seu banco via CSV ou OFX em segundos.</p>
+            </div>
           </div>
         </div>
       </main>
@@ -124,7 +131,7 @@ export default function Home() {
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">Conheça por dentro</h2>
           <p className="text-muted text-center mb-12 max-w-lg mx-auto">Veja como o Meta do Milhão organiza suas finanças de forma simples e visual.</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Dashboard Demo */}
             <div className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors">
               <div className="flex items-center gap-3 mb-5">
@@ -274,6 +281,56 @@ export default function Home() {
                     <div className="h-full rounded-full bg-success" style={{ width: '72%' }} />
                   </div>
                   <p className="text-[10px] text-muted mt-1">72% atingido — R$ 7.200 / R$ 10.000</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Import Demo */}
+            <div className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Upload size={20} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h3 className="font-semibold">Importação Bancária</h3>
+                  <p className="text-xs text-muted">Importe extratos em segundos</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="p-3 bg-background rounded-lg">
+                  <div className="flex items-center gap-3 mb-3">
+                    <FileSpreadsheet size={18} className="text-success" strokeWidth={1.5} />
+                    <div>
+                      <p className="text-sm font-medium">fatura-itau-mar2026.csv</p>
+                      <p className="text-[11px] text-muted">32 transações encontradas</p>
+                    </div>
+                  </div>
+                  <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-success" style={{ width: '100%' }} />
+                  </div>
+                  <p className="text-[10px] text-success mt-1">Importação concluída</p>
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1 p-2 bg-background rounded-lg text-center">
+                    <FileSpreadsheet size={14} className="text-primary mx-auto mb-1" strokeWidth={1.5} />
+                    <p className="text-[10px] font-medium">CSV</p>
+                  </div>
+                  <div className="flex-1 p-2 bg-background rounded-lg text-center">
+                    <FileText size={14} className="text-primary mx-auto mb-1" strokeWidth={1.5} />
+                    <p className="text-[10px] font-medium">OFX</p>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  {[
+                    { bank: 'Itaú', icon: '🏦' },
+                    { bank: 'Nubank', icon: '💜' },
+                    { bank: 'Bradesco', icon: '🏧' },
+                  ].map((b, i) => (
+                    <div key={i} className="flex items-center gap-2 p-2 bg-background rounded-lg">
+                      <span className="text-sm">{b.icon}</span>
+                      <span className="text-xs text-muted">Compatível com {b.bank}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
