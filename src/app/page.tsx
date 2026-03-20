@@ -385,83 +385,101 @@ export default function Home() {
       </section>
 
       {/* Testimonials Section */}
-      <section className="px-6 py-16">
-        <div className="max-w-6xl mx-auto">
+      <section className="py-16 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">O que dizem nossos usuários</h2>
           <p className="text-muted text-center mb-12 max-w-lg mx-auto">Histórias reais de pessoas que transformaram sua vida financeira com o Meta do Milhão.</p>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Fernanda Oliveira',
-                role: 'Planejadora Financeira, CFP',
-                quote: 'Recomendo o Meta do Milhão para todos os meus clientes que estão começando a organizar as finanças. A interface é intuitiva e o fato de ser gratuito remove qualquer barreira de entrada.',
-                stars: 5,
-                img: 'https://i.pravatar.cc/80?img=47',
-              },
-              {
-                name: 'Ricardo Santos',
-                role: 'Pai de família, São Paulo',
-                quote: 'Pela primeira vez eu e minha esposa conseguimos enxergar para onde o dinheiro vai no mês. O controle por categorias mudou completamente nossa forma de lidar com as despesas de casa.',
-                stars: 5,
-                img: 'https://i.pravatar.cc/80?img=12',
-              },
-              {
-                name: 'Camila Rodrigues',
-                role: 'Educadora Financeira',
-                quote: 'É raro encontrar uma ferramenta tão completa sendo oferecida de forma totalmente gratuita. O dashboard visual facilita muito a compreensão dos alunos em meus cursos de educação financeira.',
-                stars: 5,
-                img: 'https://i.pravatar.cc/80?img=23',
-              },
-              {
-                name: 'Marcos Almeida',
-                role: 'Autônomo, Belo Horizonte',
-                quote: 'Como freelancer, minha renda varia bastante. O Meta do Milhão me ajudou a ter uma visão clara do meu fluxo mensal e a me planejar melhor para os meses mais fracos.',
-                stars: 5,
-                img: 'https://i.pravatar.cc/80?img=53',
-              },
-              {
-                name: 'Juliana Costa',
-                role: 'Mãe e empreendedora, Recife',
-                quote: 'A importação de extratos bancários economiza um tempo absurdo. Antes eu gastava horas lançando tudo manualmente. Agora em segundos está tudo categorizado e organizado.',
-                stars: 5,
-                img: 'https://i.pravatar.cc/80?img=44',
-              },
-              {
-                name: 'André Mendes',
-                role: 'Consultor Financeiro',
-                quote: 'O recurso de perfil familiar é um diferencial enorme. Muitos apps no mercado não pensam na família como unidade financeira. Aqui, todos acompanham as metas juntos.',
-                stars: 4,
-                img: 'https://i.pravatar.cc/80?img=59',
-              },
-            ].map((t, i) => (
-              <div key={i} className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors flex flex-col">
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: 5 }).map((_, s) => (
-                    <Star
-                      key={s}
-                      size={16}
-                      className={s < t.stars ? 'text-primary fill-primary' : 'text-border'}
-                      strokeWidth={1.5}
-                    />
-                  ))}
-                </div>
-                <div className="flex-1 mb-5">
-                  <Quote size={20} className="text-primary/30 mb-2" strokeWidth={1.5} />
-                  <p className="text-sm text-muted leading-relaxed">{t.quote}</p>
-                </div>
-                <div className="flex items-center gap-3 pt-4 border-t border-border">
-                  <img
-                    src={t.img}
-                    alt={t.name}
-                    className="w-10 h-10 rounded-full object-cover"
-                    loading="lazy"
-                  />
-                  <div>
-                    <p className="text-sm font-semibold">{t.name}</p>
-                    <p className="text-xs text-muted">{t.role}</p>
+        <div className="relative">
+          <style dangerouslySetInnerHTML={{ __html: `
+            @keyframes scroll-testimonials {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .testimonials-track {
+              animation: scroll-testimonials 30s linear infinite;
+            }
+            .testimonials-track:hover {
+              animation-play-state: paused;
+            }
+          `}} />
+          <div className="testimonials-track flex gap-6 w-max">
+            {[0, 1].map((copy) => (
+              <div key={copy} className="flex gap-6">
+                {[
+                  {
+                    name: 'Fernanda Oliveira',
+                    role: 'Planejadora Financeira, CFP',
+                    quote: 'Recomendo o Meta do Milhão para todos os meus clientes que estão começando a organizar as finanças. A interface é intuitiva e o fato de ser gratuito remove qualquer barreira de entrada.',
+                    stars: 5,
+                    img: 'https://i.pravatar.cc/80?img=47',
+                  },
+                  {
+                    name: 'Ricardo Santos',
+                    role: 'Pai de família, São Paulo',
+                    quote: 'Pela primeira vez eu e minha esposa conseguimos enxergar para onde o dinheiro vai no mês. O controle por categorias mudou completamente nossa forma de lidar com as despesas de casa.',
+                    stars: 5,
+                    img: 'https://i.pravatar.cc/80?img=12',
+                  },
+                  {
+                    name: 'Camila Rodrigues',
+                    role: 'Educadora Financeira',
+                    quote: 'É raro encontrar uma ferramenta tão completa sendo oferecida de forma totalmente gratuita. O dashboard visual facilita muito a compreensão dos alunos em meus cursos de educação financeira.',
+                    stars: 5,
+                    img: 'https://i.pravatar.cc/80?img=23',
+                  },
+                  {
+                    name: 'Marcos Almeida',
+                    role: 'Autônomo, Belo Horizonte',
+                    quote: 'Como freelancer, minha renda varia bastante. O Meta do Milhão me ajudou a ter uma visão clara do meu fluxo mensal e a me planejar melhor para os meses mais fracos.',
+                    stars: 5,
+                    img: 'https://i.pravatar.cc/80?img=53',
+                  },
+                  {
+                    name: 'Juliana Costa',
+                    role: 'Mãe e empreendedora, Recife',
+                    quote: 'A importação de extratos bancários economiza um tempo absurdo. Antes eu gastava horas lançando tudo manualmente. Agora em segundos está tudo categorizado e organizado.',
+                    stars: 5,
+                    img: 'https://i.pravatar.cc/80?img=44',
+                  },
+                  {
+                    name: 'André Mendes',
+                    role: 'Consultor Financeiro',
+                    quote: 'O recurso de perfil familiar é um diferencial enorme. Muitos apps no mercado não pensam na família como unidade financeira. Aqui, todos acompanham as metas juntos.',
+                    stars: 4,
+                    img: 'https://i.pravatar.cc/80?img=59',
+                  },
+                ].map((t, i) => (
+                  <div key={`${copy}-${i}`} className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors flex flex-col w-[340px] shrink-0">
+                    <div className="flex items-center gap-1 mb-4">
+                      {Array.from({ length: 5 }).map((_, s) => (
+                        <Star
+                          key={s}
+                          size={16}
+                          className={s < t.stars ? 'text-primary fill-primary' : 'text-border'}
+                          strokeWidth={1.5}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex-1 mb-5">
+                      <Quote size={20} className="text-primary/30 mb-2" strokeWidth={1.5} />
+                      <p className="text-sm text-muted leading-relaxed">{t.quote}</p>
+                    </div>
+                    <div className="flex items-center gap-3 pt-4 border-t border-border">
+                      <img
+                        src={t.img}
+                        alt={t.name}
+                        className="w-10 h-10 rounded-full object-cover"
+                        loading="lazy"
+                      />
+                      <div>
+                        <p className="text-sm font-semibold">{t.name}</p>
+                        <p className="text-xs text-muted">{t.role}</p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ))}
               </div>
             ))}
           </div>
