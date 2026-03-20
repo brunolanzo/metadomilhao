@@ -19,6 +19,9 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  verification: {
+    google: "QcmIh2RbdJ7kU7Qq9x2WgwK9-IDHN2kPpNYWkEroqow",
+  },
   title: {
     default: "Meta do Milhão | Controle Financeiro Familiar Gratuito",
     template: "%s | Meta do Milhão",
