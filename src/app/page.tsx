@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, PieChart, Tags, Users, BadgeCheck, ShieldCheck, LayoutDashboard, ArrowLeftRight, TrendingUp, TrendingDown, Wallet, Target, Upload, FileSpreadsheet, FileText, Star, Quote } from 'lucide-react';
+import { ArrowRight, PieChart, Tags, Users, BadgeCheck, ShieldCheck, LayoutDashboard, ArrowLeftRight, TrendingUp, TrendingDown, Wallet, Target, Upload, FileSpreadsheet, FileText, Star, Quote, Smartphone, Monitor } from 'lucide-react';
 import { Footer } from '@/components/layout/footer';
 import { WhatsAppShareButton } from '@/components/whatsapp-share-button';
 
@@ -330,6 +330,51 @@ export default function Home() {
                     <div key={i} className="flex items-center gap-2 p-2 bg-background rounded-lg">
                       <span className="text-sm">{b.icon}</span>
                       <span className="text-xs text-muted">Compatível com {b.bank}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Responsive Demo */}
+            <div className="bg-card border border-border rounded-2xl p-6 hover:border-primary/30 transition-colors">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Smartphone size={20} className="text-primary" strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h3 className="font-semibold">100% Responsivo</h3>
+                  <p className="text-xs text-muted">Desktop, tablet e celular</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-center gap-6">
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-16 h-24 rounded-lg border-2 border-primary/40 flex items-center justify-center bg-background">
+                      <Smartphone size={20} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-[10px] text-muted">Celular</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-24 h-20 rounded-lg border-2 border-primary/40 flex items-center justify-center bg-background">
+                      <Monitor size={20} className="text-primary" strokeWidth={1.5} />
+                    </div>
+                    <span className="text-[10px] text-muted">Desktop</span>
+                  </div>
+                </div>
+                <div className="p-3 bg-background rounded-lg text-center">
+                  <p className="text-sm font-medium text-primary mb-1">Instale como App</p>
+                  <p className="text-[11px] text-muted">Adicione à tela inicial do seu celular e use como um aplicativo nativo.</p>
+                </div>
+                <div className="space-y-1.5">
+                  {[
+                    { feat: 'Interface adaptativa', desc: 'Se ajusta a qualquer tela' },
+                    { feat: 'PWA instalável', desc: 'Funciona offline e como app' },
+                    { feat: 'Tema claro e escuro', desc: 'Conforto visual em qualquer hora' },
+                  ].map((f, i) => (
+                    <div key={i} className="flex items-center justify-between p-2 bg-background rounded-lg">
+                      <span className="text-xs font-medium">{f.feat}</span>
+                      <span className="text-[10px] text-muted">{f.desc}</span>
                     </div>
                   ))}
                 </div>
