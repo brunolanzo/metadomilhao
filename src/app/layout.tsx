@@ -95,7 +95,10 @@ export const metadata: Metadata = {
     title: "Meta do Milhão",
   },
   icons: {
-    icon: "/favicon.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-48.svg", type: "image/svg+xml", sizes: "48x48" },
+    ],
     apple: "/icons/icon-192.svg",
   },
   category: "finance",
