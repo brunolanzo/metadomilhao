@@ -372,6 +372,11 @@ export default function DashboardPage() {
                       <Cell key={i} fill={entry.color} />
                     ))}
                   </Pie>
+                  <Tooltip
+                    formatter={(value: number) => [formatCurrency(value), 'Valor']}
+                    contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--foreground)' }}
+                    itemStyle={{ color: 'var(--foreground)' }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
               <div className="flex flex-col gap-2 flex-1">
