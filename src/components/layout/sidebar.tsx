@@ -20,7 +20,7 @@ import {
 const ADMIN_EMAIL = 'admin.metadomilhao@gmail.com';
 
 const userNavItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/dashboard', label: 'Painel', icon: LayoutDashboard },
   { href: '/dashboard/transactions', label: 'Transações', icon: ArrowLeftRight },
   { href: '/dashboard/categories', label: 'Categorias', icon: Tags },
   { href: '/dashboard/goals', label: 'Metas', icon: Target },
