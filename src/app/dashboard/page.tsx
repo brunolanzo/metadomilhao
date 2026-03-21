@@ -357,28 +357,30 @@ export default function DashboardPage() {
           <h2 className="text-sm font-medium text-muted mb-4">Despesas por categoria</h2>
           {categoryData.length > 0 ? (
             <div className="flex items-center gap-6">
-              <ResponsiveContainer width={160} height={160}>
-                <PieChart>
+              <div style={{ width: 160, height: 160 }}>
+                <PieChart width={160} height={160}>
                   <Pie
                     data={categoryData}
                     dataKey="value"
+                    nameKey="name"
                     cx="50%"
                     cy="50%"
                     innerRadius={45}
                     outerRadius={75}
                     strokeWidth={0}
+                    isAnimationActive={false}
                   >
                     {categoryData.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => [formatCurrency(value), 'Valor']}
-                    contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--foreground)' }}
+                    formatter={(value: number) => formatCurrency(value)}
+                    contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--foreground)', fontSize: '13px' }}
                     itemStyle={{ color: 'var(--foreground)' }}
                   />
                 </PieChart>
-              </ResponsiveContainer>
+              </div>
               <div className="flex flex-col gap-2 flex-1">
                 {categoryData.map((entry, i) => (
                   <div key={i} className="flex items-center justify-between text-sm">
