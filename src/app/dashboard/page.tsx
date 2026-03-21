@@ -28,6 +28,8 @@ export default function DashboardPage() {
   const [expense, setExpense] = useState(0);
   const [yearIncome, setYearIncome] = useState(0);
   const [yearExpense, setYearExpense] = useState(0);
+  const [ytdIncome, setYtdIncome] = useState(0);
+  const [ytdExpense, setYtdExpense] = useState(0);
   const [recentTransactions, setRecentTransactions] = useState<(Transaction & { category: Category })[]>([]);
   const [categoryData, setCategoryData] = useState<{ name: string; value: number; color: string }[]>([]);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
@@ -126,6 +128,17 @@ export default function DashboardPage() {
 
       setYearIncome(yInc);
       setYearExpense(yExp);
+
+      // YTD (year-to-date: Jan 1 to end of current month)
+      const ytdEnd = end; // current month end
+      const ytdInc = yearTransactions
+        .filter((t) => t.type === 'income' && t.date <= ytdEnd)
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+      const ytdExp = yearTransactions
+        .filter((t) => t.type === 'expense' && t.date <= ytdEnd)
+        .reduce((sum, t) => sum + Number(t.amount), 0);
+      setYtdIncome(ytdInc);
+      setYtdExpense(ytdExp);
 
       // Build monthly data from year transactions (covers 6-month chart)
       const monthMap = new Map<string, MonthlyData>();
@@ -232,8 +245,12 @@ export default function DashboardPage() {
 
   const balance = income - expense;
   const prevBalance = prevIncome - prevExpense;
+  const ytdBalance = ytdIncome - ytdExpense;
   const savingsMonth = income > 0 ? ((income - expense) / income) * 100 : 0;
+  const savingsYtd = ytdIncome > 0 ? ((ytdIncome - ytdExpense) / ytdIncome) * 100 : 0;
   const savingsYear = yearIncome > 0 ? ((yearIncome - yearExpense) / yearIncome) * 100 : 0;
+  const currentMonthName = new Intl.DateTimeFormat('pt-BR', { month: 'long' }).format(new Date());
+  const ytdLabel = `até ${currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1)}`;
 
   function compareLabel(current: number, previous: number): React.ReactNode {
     if (previous === 0) return null;
@@ -303,6 +320,39 @@ export default function DashboardPage() {
         </Link>
       </div>
 
+      {/* YTD Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <Card className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
+            <CalendarDays size={24} className="text-success" strokeWidth={1.5} />
+          </div>
+          <div>
+            <p className="text-sm text-muted">Receita {ytdLabel}</p>
+            <p className="text-xl font-bold text-success">{formatCurrency(ytdIncome)}</p>
+          </div>
+        </Card>
+
+        <Card className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg bg-danger/10 flex items-center justify-center shrink-0">
+            <CalendarDays size={24} className="text-danger" strokeWidth={1.5} />
+          </div>
+          <div>
+            <p className="text-sm text-muted">Despesa {ytdLabel}</p>
+            <p className="text-xl font-bold text-danger">{formatCurrency(ytdExpense)}</p>
+          </div>
+        </Card>
+
+        <Card className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: ytdBalance >= 0 ? 'var(--success)' : 'var(--danger)', opacity: 0.1 }}>
+            <Wallet size={24} className={ytdBalance >= 0 ? 'text-success' : 'text-danger'} strokeWidth={1.5} />
+          </div>
+          <div>
+            <p className="text-sm text-muted">Saldo {ytdLabel}</p>
+            <p className={`text-xl font-bold ${ytdBalance >= 0 ? 'text-success' : 'text-danger'}`}>{formatCurrency(ytdBalance)}</p>
+          </div>
+        </Card>
+      </div>
+
       {/* Annual + Savings Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <Card className="flex items-center gap-4">
@@ -310,7 +360,7 @@ export default function DashboardPage() {
             <CalendarDays size={24} className="text-success" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-sm text-muted">Receita anual</p>
+            <p className="text-sm text-muted">Receita prevista anual</p>
             <p className="text-xl font-bold text-success">{formatCurrency(yearIncome)}</p>
           </div>
         </Card>
@@ -320,7 +370,7 @@ export default function DashboardPage() {
             <CalendarDays size={24} className="text-danger" strokeWidth={1.5} />
           </div>
           <div>
-            <p className="text-sm text-muted">Despesa anual</p>
+            <p className="text-sm text-muted">Despesa prevista anual</p>
             <p className="text-xl font-bold text-danger">{formatCurrency(yearExpense)}</p>
           </div>
         </Card>
@@ -337,6 +387,13 @@ export default function DashboardPage() {
                   {savingsMonth.toFixed(0)}%
                 </span>
                 <span className="text-xs text-muted ml-1">mês</span>
+              </div>
+              <div className="w-px h-6 bg-border" />
+              <div>
+                <span className={`text-lg font-bold ${savingsYtd >= 0 ? 'text-success' : 'text-danger'}`}>
+                  {savingsYtd.toFixed(0)}%
+                </span>
+                <span className="text-xs text-muted ml-1">{ytdLabel}</span>
               </div>
               <div className="w-px h-6 bg-border" />
               <div>
@@ -375,7 +432,7 @@ export default function DashboardPage() {
                     ))}
                   </Pie>
                   <Tooltip
-                    formatter={(value: number) => formatCurrency(value)}
+                    formatter={(value) => formatCurrency(Number(value))}
                     contentStyle={{ backgroundColor: 'var(--card)', border: '1px solid var(--border)', borderRadius: '8px', color: 'var(--foreground)', fontSize: '13px' }}
                     itemStyle={{ color: 'var(--foreground)' }}
                   />
