@@ -64,9 +64,9 @@ export default function Home() {
       <main className="flex items-center justify-center px-6 py-16">
         <div className="max-w-2xl text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight">
-            Controle financeiro, gratuito
+            Controle financeiro gratuito.
             <br />
-            <span className="text-primary">e completo, como tem que ser</span>
+            <span className="text-primary">Como tem que ser.</span>
           </h1>
           <p className="text-lg text-muted mb-10 max-w-lg mx-auto">
             Gerencie gastos e ganhos da sua família em um só lugar.
