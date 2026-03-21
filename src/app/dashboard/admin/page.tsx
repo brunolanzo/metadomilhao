@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/card';
-import { ShieldCheck, Users, Home, ArrowLeftRight, UserPlus, Calendar, CalendarDays } from 'lucide-react';
+import { ShieldCheck, Users, Home, ArrowLeftRight, UserPlus, Calendar, CalendarDays, Activity } from 'lucide-react';
 
 interface Stats {
   total_users: number;
@@ -19,6 +19,8 @@ interface RecentUser {
   name: string;
   email: string;
   created_at: string;
+  last_sign_in: string | null;
+  transaction_count: number;
 }
 
 interface FamilyRow {
@@ -51,19 +53,16 @@ export default function AdminPage() {
 
     setAuthorized(true);
 
-    // Load stats
     const { data: statsData, error: statsError } = await supabase.rpc('admin_get_stats');
     if (!statsError && statsData) {
       setStats(statsData as Stats);
     }
 
-    // Load recent users
-    const { data: usersData, error: usersError } = await supabase.rpc('admin_get_recent_users', { lim: 20 });
+    const { data: usersData, error: usersError } = await supabase.rpc('admin_get_recent_users', { lim: 50 });
     if (!usersError && usersData) {
       setRecentUsers(usersData as RecentUser[]);
     }
 
-    // Load families
     const { data: familiesData, error: familiesError } = await supabase.rpc('admin_get_families', { lim: 50 });
     if (!familiesError && familiesData) {
       setFamilies(familiesData as FamilyRow[]);
@@ -98,6 +97,23 @@ export default function AdminPage() {
       hour: '2-digit',
       minute: '2-digit',
     });
+  }
+
+  function getActivityStatus(user: RecentUser) {
+    if (user.transaction_count === 0) {
+      return { label: 'Inativo', color: 'text-danger', bg: 'bg-danger/10' };
+    }
+    if (!user.last_sign_in) {
+      return { label: 'Nunca logou', color: 'text-muted', bg: 'bg-border' };
+    }
+    const daysSinceLogin = Math.floor((Date.now() - new Date(user.last_sign_in).getTime()) / (1000 * 60 * 60 * 24));
+    if (daysSinceLogin <= 7) {
+      return { label: 'Ativo', color: 'text-success', bg: 'bg-success/10' };
+    }
+    if (daysSinceLogin <= 30) {
+      return { label: 'Recente', color: 'text-primary', bg: 'bg-primary/10' };
+    }
+    return { label: 'Ausente', color: 'text-muted', bg: 'bg-border' };
   }
 
   return (
@@ -175,9 +191,12 @@ export default function AdminPage() {
         </>
       )}
 
-      {/* Recent Users */}
+      {/* Users Table */}
       <Card className="mb-6">
-        <h2 className="text-sm font-medium text-muted mb-4">Últimos usuários cadastrados</h2>
+        <div className="flex items-center gap-2 mb-4">
+          <Activity size={18} className="text-primary" strokeWidth={1.5} />
+          <h2 className="text-sm font-medium text-muted">Usuários — atividade e engajamento</h2>
+        </div>
         {recentUsers.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -186,16 +205,35 @@ export default function AdminPage() {
                   <th className="pb-3 font-medium text-muted">Nome</th>
                   <th className="pb-3 font-medium text-muted">Email</th>
                   <th className="pb-3 font-medium text-muted">Cadastro</th>
+                  <th className="pb-3 font-medium text-muted">Último login</th>
+                  <th className="pb-3 font-medium text-muted text-center">Transações</th>
+                  <th className="pb-3 font-medium text-muted text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
-                {recentUsers.map((u) => (
-                  <tr key={u.user_id}>
-                    <td className="py-3 font-medium">{u.name}</td>
-                    <td className="py-3 text-muted">{u.email}</td>
-                    <td className="py-3 text-muted">{formatDateTime(u.created_at)}</td>
-                  </tr>
-                ))}
+                {recentUsers.map((u) => {
+                  const status = getActivityStatus(u);
+                  return (
+                    <tr key={u.user_id}>
+                      <td className="py-3 font-medium">{u.name}</td>
+                      <td className="py-3 text-muted">{u.email}</td>
+                      <td className="py-3 text-muted">{formatDateTime(u.created_at)}</td>
+                      <td className="py-3 text-muted">
+                        {u.last_sign_in ? formatDateTime(u.last_sign_in) : '—'}
+                      </td>
+                      <td className="py-3 text-center">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                          {u.transaction_count}
+                        </span>
+                      </td>
+                      <td className="py-3 text-center">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.color} ${status.bg}`}>
+                          {status.label}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

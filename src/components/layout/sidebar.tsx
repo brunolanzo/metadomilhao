@@ -19,13 +19,17 @@ import {
 
 const ADMIN_EMAIL = 'admin.metadomilhao@gmail.com';
 
-const navItems = [
+const userNavItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/dashboard/transactions', label: 'Transações', icon: ArrowLeftRight },
   { href: '/dashboard/categories', label: 'Categorias', icon: Tags },
   { href: '/dashboard/goals', label: 'Metas', icon: Target },
   { href: '/dashboard/family', label: 'Família', icon: Users },
   { href: '/dashboard/settings', label: 'Configurações', icon: Settings },
+];
+
+const adminNavItems = [
+  { href: '/dashboard/admin', label: 'Painel Admin', icon: ShieldCheck },
 ];
 
 interface SidebarProps {
@@ -96,7 +100,7 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
         {/* Navigation */}
         <nav className="flex-1 px-3 py-4">
           <ul className="flex flex-col gap-1">
-            {navItems.map((item) => {
+            {(isAdmin ? adminNavItems : userNavItems).map((item) => {
               const isActive =
                 item.href === '/dashboard'
                   ? pathname === '/dashboard'
@@ -119,23 +123,6 @@ export function Sidebar({ isOpen = false, onClose }: SidebarProps) {
                 </li>
               );
             })}
-            {isAdmin && (
-              <li>
-                <Link
-                  href="/dashboard/admin"
-                  onClick={handleNavClick}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors',
-                    pathname.startsWith('/dashboard/admin')
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-muted hover:text-foreground hover:bg-card'
-                  )}
-                >
-                  <ShieldCheck size={20} strokeWidth={1.5} />
-                  Admin
-                </Link>
-              </li>
-            )}
           </ul>
         </nav>
 
