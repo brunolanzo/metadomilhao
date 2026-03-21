@@ -323,8 +323,18 @@ export default function DashboardPage() {
       {/* YTD Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         <Card className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: ytdBalance >= 0 ? 'var(--success)' : 'var(--danger)', opacity: 0.1 }}>
+            <Wallet size={24} className={ytdBalance >= 0 ? 'text-success' : 'text-danger'} strokeWidth={1.5} />
+          </div>
+          <div>
+            <p className="text-sm text-muted">Saldo {ytdLabel}</p>
+            <p className={`text-xl font-bold ${ytdBalance >= 0 ? 'text-success' : 'text-danger'}`}>{formatCurrency(ytdBalance)}</p>
+          </div>
+        </Card>
+
+        <Card className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center shrink-0">
-            <CalendarDays size={24} className="text-success" strokeWidth={1.5} />
+            <TrendingUp size={24} className="text-success" strokeWidth={1.5} />
           </div>
           <div>
             <p className="text-sm text-muted">Receita {ytdLabel}</p>
@@ -334,21 +344,11 @@ export default function DashboardPage() {
 
         <Card className="flex items-center gap-4">
           <div className="w-12 h-12 rounded-lg bg-danger/10 flex items-center justify-center shrink-0">
-            <CalendarDays size={24} className="text-danger" strokeWidth={1.5} />
+            <TrendingDown size={24} className="text-danger" strokeWidth={1.5} />
           </div>
           <div>
             <p className="text-sm text-muted">Despesa {ytdLabel}</p>
             <p className="text-xl font-bold text-danger">{formatCurrency(ytdExpense)}</p>
-          </div>
-        </Card>
-
-        <Card className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-lg flex items-center justify-center shrink-0" style={{ backgroundColor: ytdBalance >= 0 ? 'var(--success)' : 'var(--danger)', opacity: 0.1 }}>
-            <Wallet size={24} className={ytdBalance >= 0 ? 'text-success' : 'text-danger'} strokeWidth={1.5} />
-          </div>
-          <div>
-            <p className="text-sm text-muted">Saldo {ytdLabel}</p>
-            <p className={`text-xl font-bold ${ytdBalance >= 0 ? 'text-success' : 'text-danger'}`}>{formatCurrency(ytdBalance)}</p>
           </div>
         </Card>
       </div>
