@@ -88,9 +88,10 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-2">
               <ShieldCheck size={22} className="text-success" strokeWidth={1.5} />
-              <span className="text-sm font-medium text-foreground">Seguro</span>
+              <span className="text-sm font-medium text-foreground">Seguro — sem dados sensíveis</span>
             </div>
           </div>
+          <p className="mt-3 text-xs text-muted max-w-md mx-auto">Não exigimos dados bancários, CPF ou informações pessoais. Você controla apenas o que importa para sua evolução financeira.</p>
 
           {/* Features */}
           <div className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-8">
