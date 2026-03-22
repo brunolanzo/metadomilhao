@@ -44,7 +44,7 @@ function TransactionsContent() {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   });
   const [filterType, setFilterType] = useState<'all' | TransactionType>('all');
-  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterCategory, setFilterCategory] = useState(() => searchParams.get('category') || 'all');
   const [filterSearch, setFilterSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [filterMember, setFilterMember] = useState('all');

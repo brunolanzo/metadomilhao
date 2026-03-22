@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import { formatCurrency, formatDate, getMonthRange, toLocalDateString } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Wallet, ArrowLeftRight, CalendarDays, PiggyBank, Target, AlertTriangle, Plus } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, AreaChart, Area } from 'recharts';
 import type { Transaction, Category, Goal, CategoryBudget } from '@/types/database';
 
@@ -31,7 +32,7 @@ export default function DashboardPage() {
   const [ytdIncome, setYtdIncome] = useState(0);
   const [ytdExpense, setYtdExpense] = useState(0);
   const [recentTransactions, setRecentTransactions] = useState<(Transaction & { category: Category })[]>([]);
-  const [categoryData, setCategoryData] = useState<{ name: string; value: number; color: string }[]>([]);
+  const [categoryData, setCategoryData] = useState<{ id: string; name: string; value: number; color: string }[]>([]);
   const [monthlyData, setMonthlyData] = useState<MonthlyData[]>([]);
   const [currentGoal, setCurrentGoal] = useState<Goal | null>(null);
   const [budgetAlerts, setBudgetAlerts] = useState<BudgetAlert[]>([]);
@@ -39,6 +40,7 @@ export default function DashboardPage() {
   const [prevExpense, setPrevExpense] = useState(0);
   const [wealthData, setWealthData] = useState<{ month: string; value: number }[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     loadDashboard();
@@ -87,7 +89,7 @@ export default function DashboardPage() {
       setRecentTransactions(transactions.slice(0, 5));
 
       // Category breakdown (expenses only)
-      const catMap = new Map<string, { name: string; value: number; color: string }>();
+      const catMap = new Map<string, { id: string; name: string; value: number; color: string }>();
       transactions
         .filter((t) => t.type === 'expense' && t.category)
         .forEach((t) => {
@@ -97,6 +99,7 @@ export default function DashboardPage() {
             existing.value += Number(t.amount);
           } else {
             catMap.set(key, {
+              id: t.category.id,
               name: t.category.name,
               value: Number(t.amount),
               color: t.category.color,
@@ -426,6 +429,11 @@ export default function DashboardPage() {
                     outerRadius={75}
                     strokeWidth={0}
                     isAnimationActive={false}
+                    style={{ cursor: 'pointer' }}
+                    onClick={(_, index) => {
+                      const cat = categoryData[index];
+                      if (cat) router.push(`/dashboard/transactions?category=${cat.id}`);
+                    }}
                   >
                     {categoryData.map((entry, i) => (
                       <Cell key={i} fill={entry.color} />
@@ -440,7 +448,11 @@ export default function DashboardPage() {
               </div>
               <div className="flex flex-col gap-2 flex-1">
                 {categoryData.map((entry, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between text-sm cursor-pointer hover:bg-card-hover rounded-lg px-2 py-1 -mx-2 transition-colors"
+                    onClick={() => router.push(`/dashboard/transactions?category=${entry.id}`)}
+                  >
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
                       <span className="text-muted">{entry.name}</span>
