@@ -23,11 +23,22 @@ interface RecentUser {
   transaction_count: number;
 }
 
+interface FamilyMember {
+  user_id: string;
+  name: string;
+  email: string;
+  transaction_count: number;
+  last_sign_in: string | null;
+}
+
 interface FamilyRow {
   family_id: string;
   family_name: string;
   member_count: number;
+  total_transactions: number;
+  last_activity: string | null;
   created_at: string;
+  members: FamilyMember[] | null;
 }
 
 export default function AdminPage() {
@@ -244,32 +255,65 @@ export default function AdminPage() {
 
       {/* Families */}
       <Card>
-        <h2 className="text-sm font-medium text-muted mb-4">Famílias</h2>
+        <div className="flex items-center gap-2 mb-4">
+          <Home size={18} className="text-success" strokeWidth={1.5} />
+          <h2 className="text-sm font-medium text-muted">Famílias — membros e atividade</h2>
+        </div>
         {families.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left">
-                  <th className="pb-3 font-medium text-muted">Nome da família</th>
-                  <th className="pb-3 font-medium text-muted">Membros</th>
-                  <th className="pb-3 font-medium text-muted">Criada em</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {families.map((f) => (
-                  <tr key={f.family_id}>
-                    <td className="py-3 font-medium">{f.family_name}</td>
-                    <td className="py-3">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                        <Users size={12} />
-                        {f.member_count}
-                      </span>
-                    </td>
-                    <td className="py-3 text-muted">{formatDateTime(f.created_at)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex flex-col gap-6">
+            {families.map((f) => (
+              <div key={f.family_id} className="border border-border rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <h3 className="font-medium">{f.family_name}</h3>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                      <Users size={12} />
+                      {f.member_count} {f.member_count === 1 ? 'membro' : 'membros'}
+                    </span>
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success/10 text-success text-xs font-medium">
+                      <ArrowLeftRight size={12} />
+                      {f.total_transactions} transações
+                    </span>
+                  </div>
+                  <div className="text-xs text-muted">
+                    Criada em {formatDateTime(f.created_at)}
+                    {f.last_activity && (
+                      <span className="ml-3">Última atividade: {formatDateTime(f.last_activity)}</span>
+                    )}
+                  </div>
+                </div>
+                {f.members && f.members.length > 0 ? (
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border text-left">
+                        <th className="pb-2 font-medium text-muted text-xs">Nome</th>
+                        <th className="pb-2 font-medium text-muted text-xs">Email</th>
+                        <th className="pb-2 font-medium text-muted text-xs text-center">Transações</th>
+                        <th className="pb-2 font-medium text-muted text-xs">Último login</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {f.members.map((m) => (
+                        <tr key={m.user_id}>
+                          <td className="py-2 font-medium text-xs">{m.name}</td>
+                          <td className="py-2 text-muted text-xs">{m.email}</td>
+                          <td className="py-2 text-center">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                              {m.transaction_count}
+                            </span>
+                          </td>
+                          <td className="py-2 text-muted text-xs">
+                            {m.last_sign_in ? formatDateTime(m.last_sign_in) : '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="text-xs text-muted">Sem membros</p>
+                )}
+              </div>
+            ))}
           </div>
         ) : (
           <p className="text-sm text-muted text-center py-8">Nenhuma família encontrada</p>

@@ -54,6 +54,12 @@ export default function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setLoading(false); return; }
 
+    // Admin redirect
+    if (user.email === 'admin.metadomilhao@gmail.com') {
+      router.push('/dashboard/admin');
+      return;
+    }
+
     const { data: membership } = await supabase
       .from('family_members')
       .select('family_id')
