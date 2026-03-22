@@ -209,45 +209,75 @@ export default function AdminPage() {
           <h2 className="text-sm font-medium text-muted">Usuários — atividade e engajamento</h2>
         </div>
         {recentUsers.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border text-left">
-                  <th className="pb-3 font-medium text-muted">Nome</th>
-                  <th className="pb-3 font-medium text-muted">Email</th>
-                  <th className="pb-3 font-medium text-muted">Cadastro</th>
-                  <th className="pb-3 font-medium text-muted">Último login</th>
-                  <th className="pb-3 font-medium text-muted text-center">Transações</th>
-                  <th className="pb-3 font-medium text-muted text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {recentUsers.map((u) => {
-                  const status = getActivityStatus(u);
-                  return (
-                    <tr key={u.user_id}>
-                      <td className="py-3 font-medium">{u.name}</td>
-                      <td className="py-3 text-muted">{u.email}</td>
-                      <td className="py-3 text-muted">{formatDateTime(u.created_at)}</td>
-                      <td className="py-3 text-muted">
-                        {u.last_sign_in ? formatDateTime(u.last_sign_in) : '—'}
-                      </td>
-                      <td className="py-3 text-center">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                          {u.transaction_count}
-                        </span>
-                      </td>
-                      <td className="py-3 text-center">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.color} ${status.bg}`}>
-                          {status.label}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <>
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border text-left">
+                    <th className="pb-3 font-medium text-muted">Nome</th>
+                    <th className="pb-3 font-medium text-muted">Email</th>
+                    <th className="pb-3 font-medium text-muted">Cadastro</th>
+                    <th className="pb-3 font-medium text-muted">Último login</th>
+                    <th className="pb-3 font-medium text-muted text-center">Transações</th>
+                    <th className="pb-3 font-medium text-muted text-center">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {recentUsers.map((u) => {
+                    const status = getActivityStatus(u);
+                    return (
+                      <tr key={u.user_id}>
+                        <td className="py-3 font-medium">{u.name}</td>
+                        <td className="py-3 text-muted">{u.email}</td>
+                        <td className="py-3 text-muted">{formatDateTime(u.created_at)}</td>
+                        <td className="py-3 text-muted">
+                          {u.last_sign_in ? formatDateTime(u.last_sign_in) : '—'}
+                        </td>
+                        <td className="py-3 text-center">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                            {u.transaction_count}
+                          </span>
+                        </td>
+                        <td className="py-3 text-center">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.color} ${status.bg}`}>
+                            {status.label}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile cards */}
+            <div className="sm:hidden flex flex-col gap-3">
+              {recentUsers.map((u) => {
+                const status = getActivityStatus(u);
+                return (
+                  <div key={u.user_id} className="bg-card-hover rounded-lg p-3 flex flex-col gap-1.5">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-sm">{u.name}</span>
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${status.color} ${status.bg}`}>
+                        {status.label}
+                      </span>
+                    </div>
+                    <span className="text-muted text-xs truncate">{u.email}</span>
+                    <div className="flex items-center justify-between text-xs text-muted">
+                      <span>Cadastro: {formatDateTime(u.created_at)}</span>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                        {u.transaction_count} transações
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted">
+                      Último login: {u.last_sign_in ? formatDateTime(u.last_sign_in) : '—'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         ) : (
           <p className="text-sm text-muted text-center py-8">Nenhum usuário encontrado</p>
         )}
@@ -263,52 +293,80 @@ export default function AdminPage() {
           <div className="flex flex-col gap-6">
             {families.map((f) => (
               <div key={f.family_id} className="border border-border rounded-lg p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-medium">{f.family_name}</h3>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                      <Users size={12} />
-                      {f.member_count} {f.member_count === 1 ? 'membro' : 'membros'}
-                    </span>
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success/10 text-success text-xs font-medium">
-                      <ArrowLeftRight size={12} />
-                      {f.total_transactions} transações
-                    </span>
+                {/* Family header - stacks on mobile */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <h3 className="font-medium text-sm">{f.family_name}</h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                        <Users size={12} />
+                        {f.member_count} {f.member_count === 1 ? 'membro' : 'membros'}
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success/10 text-success text-xs font-medium">
+                        <ArrowLeftRight size={12} />
+                        {f.total_transactions} transações
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-xs text-muted">
-                    Criada em {formatDateTime(f.created_at)}
+                  <div className="text-xs text-muted flex flex-col sm:flex-row sm:gap-3 gap-0.5">
+                    <span>Criada em {formatDateTime(f.created_at)}</span>
                     {f.last_activity && (
-                      <span className="ml-3">Última atividade: {formatDateTime(f.last_activity)}</span>
+                      <span>Última atividade: {formatDateTime(f.last_activity)}</span>
                     )}
                   </div>
                 </div>
+
+                {/* Members - card layout on mobile, table on desktop */}
                 {f.members && f.members.length > 0 ? (
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b border-border text-left">
-                        <th className="pb-2 font-medium text-muted text-xs">Nome</th>
-                        <th className="pb-2 font-medium text-muted text-xs">Email</th>
-                        <th className="pb-2 font-medium text-muted text-xs text-center">Transações</th>
-                        <th className="pb-2 font-medium text-muted text-xs">Último login</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
+                  <>
+                    {/* Desktop table */}
+                    <div className="hidden sm:block">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-border text-left">
+                            <th className="pb-2 font-medium text-muted text-xs">Nome</th>
+                            <th className="pb-2 font-medium text-muted text-xs">Email</th>
+                            <th className="pb-2 font-medium text-muted text-xs text-center">Transações</th>
+                            <th className="pb-2 font-medium text-muted text-xs">Último login</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border">
+                          {f.members.map((m) => (
+                            <tr key={m.user_id}>
+                              <td className="py-2 font-medium text-xs">{m.name}</td>
+                              <td className="py-2 text-muted text-xs">{m.email}</td>
+                              <td className="py-2 text-center">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
+                                  {m.transaction_count}
+                                </span>
+                              </td>
+                              <td className="py-2 text-muted text-xs">
+                                {m.last_sign_in ? formatDateTime(m.last_sign_in) : '—'}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Mobile cards */}
+                    <div className="sm:hidden flex flex-col gap-2">
                       {f.members.map((m) => (
-                        <tr key={m.user_id}>
-                          <td className="py-2 font-medium text-xs">{m.name}</td>
-                          <td className="py-2 text-muted text-xs">{m.email}</td>
-                          <td className="py-2 text-center">
+                        <div key={m.user_id} className="bg-card-hover rounded-lg p-3 flex flex-col gap-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-xs">{m.name}</span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                              {m.transaction_count}
+                              {m.transaction_count} transações
                             </span>
-                          </td>
-                          <td className="py-2 text-muted text-xs">
-                            {m.last_sign_in ? formatDateTime(m.last_sign_in) : '—'}
-                          </td>
-                        </tr>
+                          </div>
+                          <span className="text-muted text-xs truncate">{m.email}</span>
+                          <span className="text-muted text-xs">
+                            Último login: {m.last_sign_in ? formatDateTime(m.last_sign_in) : '—'}
+                          </span>
+                        </div>
                       ))}
-                    </tbody>
-                  </table>
+                    </div>
+                  </>
                 ) : (
                   <p className="text-xs text-muted">Sem membros</p>
                 )}
