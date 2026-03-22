@@ -70,6 +70,9 @@ export default function AdminPage() {
     }
 
     const { data: usersData, error: usersError } = await supabase.rpc('admin_get_recent_users', { lim: 50 });
+    if (usersError) {
+      console.error('admin_get_recent_users error:', usersError);
+    }
     if (!usersError && usersData) {
       setRecentUsers(usersData as RecentUser[]);
     }
