@@ -2,12 +2,20 @@
 
 import { useState } from 'react';
 import { Heart, X, Copy, Check, MessageCircle } from 'lucide-react';
+import { createClient } from '@/lib/supabase/client';
 
 export function DonationBanner() {
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const pixKey = 'bruno.lanzo@gmail.com';
+
+  function handlePixClick() {
+    setModalOpen(true);
+    // Track click (fire and forget)
+    const supabase = createClient();
+    supabase.from('analytics_events').insert({ event: 'pix_click' }).then(() => {});
+  }
 
   function handleCopy() {
     navigator.clipboard.writeText(pixKey);
@@ -26,7 +34,7 @@ export function DonationBanner() {
             <span className="sm:hidden"><strong>Gratuito!</strong> Ajude a manter o site vivo</span>
           </p>
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={handlePixClick}
             className="ml-2 shrink-0 px-5 py-2 bg-black text-primary font-bold text-sm rounded-full hover:bg-black/80 transition-colors cursor-pointer"
           >
             Doar via PIX

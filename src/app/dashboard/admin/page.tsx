@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { Card } from '@/components/ui/card';
-import { ShieldCheck, Users, Home, ArrowLeftRight, UserPlus, Calendar, CalendarDays, Activity } from 'lucide-react';
+import { ShieldCheck, Users, Home, ArrowLeftRight, UserPlus, Calendar, CalendarDays, Activity, Heart } from 'lucide-react';
 
 interface Stats {
   total_users: number;
@@ -46,6 +46,7 @@ export default function AdminPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [recentUsers, setRecentUsers] = useState<RecentUser[]>([]);
   const [families, setFamilies] = useState<FamilyRow[]>([]);
+  const [pixClicks, setPixClicks] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -81,6 +82,13 @@ export default function AdminPage() {
     if (!familiesError && familiesData) {
       setFamilies(familiesData as FamilyRow[]);
     }
+
+    // PIX click count
+    const { count } = await supabase
+      .from('analytics_events')
+      .select('*', { count: 'exact', head: true })
+      .eq('event', 'pix_click');
+    setPixClicks(count ?? 0);
 
     setLoading(false);
   }
@@ -199,6 +207,15 @@ export default function AdminPage() {
               <div>
                 <p className="text-sm text-muted">Novos este mês</p>
                 <p className="text-xl font-bold">{stats.new_users_month}</p>
+              </div>
+            </Card>
+            <Card className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-lg bg-danger/10 flex items-center justify-center shrink-0">
+                <Heart size={24} className="text-danger fill-danger" strokeWidth={1.5} />
+              </div>
+              <div>
+                <p className="text-sm text-muted">Cliques &quot;Doar via PIX&quot;</p>
+                <p className="text-xl font-bold">{pixClicks}</p>
               </div>
             </Card>
           </div>
