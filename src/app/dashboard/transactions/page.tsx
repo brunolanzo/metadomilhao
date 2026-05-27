@@ -247,11 +247,14 @@ function TransactionsContent() {
           await supabase.from('transactions').insert(futureTransactions);
         }
       } else if (recurrenceMode === 'installment') {
-        // Create N installments
+        // Create N installments — user enters total, we divide
+        const installmentAmount = Math.round((amountCents / totalInstallments)) / 100;
+        const installmentPayload = { ...basePayload, amount: installmentAmount };
+
         const { data: main } = await supabase
           .from('transactions')
           .insert({
-            ...basePayload,
+            ...installmentPayload,
             installment_number: 1,
             total_installments: totalInstallments,
             is_provisional: false,
@@ -263,7 +266,7 @@ function TransactionsContent() {
           const installments = [];
           for (let i = 2; i <= totalInstallments; i++) {
             installments.push({
-              ...basePayload,
+              ...installmentPayload,
               date: addMonths(date, i - 1),
               installment_number: i,
               total_installments: totalInstallments,
@@ -748,8 +751,8 @@ function TransactionsContent() {
                     required
                   />
                   <p className="text-xs text-muted">
-                    Valor de cada parcela: {formatCurrency(amountCents / 100)}.
-                    Total: {formatCurrency((amountCents / 100) * totalInstallments)}.
+                    Valor de cada parcela: {formatCurrency(Math.round(amountCents / totalInstallments) / 100)}.
+                    Total: {formatCurrency(amountCents / 100)}.
                   </p>
                 </div>
               )}
