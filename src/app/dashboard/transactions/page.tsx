@@ -401,8 +401,8 @@ function TransactionsContent() {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 mb-6">
-        <div className="relative col-span-2 sm:w-52">
+      <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3 mb-6">
+        <div className="relative sm:w-52">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" strokeWidth={1.5} />
           <input
             type="text"
@@ -412,14 +412,14 @@ function TransactionsContent() {
             className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-card border border-border text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
           />
         </div>
-        <div className="col-span-1 sm:w-44">
+        <div className="sm:w-44">
           <Input
             type="month"
             value={filterMonth}
             onChange={(e) => setFilterMonth(e.target.value)}
           />
         </div>
-        <div className="col-span-1 sm:w-40">
+        <div className="sm:w-40">
           <Select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value as 'all' | TransactionType)}
@@ -429,7 +429,7 @@ function TransactionsContent() {
             <option value="expense">Despesas</option>
           </Select>
         </div>
-        <div className="col-span-2 sm:w-48">
+        <div className="sm:w-48">
           <Select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
@@ -443,7 +443,7 @@ function TransactionsContent() {
           </Select>
         </div>
         {members.length > 1 && (
-          <div className="col-span-2 sm:w-44">
+          <div className="sm:w-44">
             <Select
               value={filterMember}
               onChange={(e) => setFilterMember(e.target.value)}
