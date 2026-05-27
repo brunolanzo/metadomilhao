@@ -401,8 +401,8 @@ function TransactionsContent() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3 mb-6 flex-wrap">
-        <div className="relative w-full sm:w-52">
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-3 mb-6">
+        <div className="relative col-span-2 sm:w-52">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" strokeWidth={1.5} />
           <input
             type="text"
@@ -412,46 +412,50 @@ function TransactionsContent() {
             className="w-full pl-9 pr-3 py-2.5 rounded-lg bg-card border border-border text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-colors"
           />
         </div>
-        <Input
-          type="month"
-          value={filterMonth}
-          onChange={(e) => setFilterMonth(e.target.value)}
-          className="w-full sm:w-44"
-        />
-        <Select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value as 'all' | TransactionType)}
-          className="w-full sm:w-40"
-        >
-          <option value="all">Todos os tipos</option>
-          <option value="income">Receitas</option>
-          <option value="expense">Despesas</option>
-        </Select>
-        <Select
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
-          className="w-full sm:w-48"
-        >
-          <option value="all">Todas as categorias</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </Select>
-        {members.length > 1 && (
+        <div className="col-span-1 sm:w-44">
+          <Input
+            type="month"
+            value={filterMonth}
+            onChange={(e) => setFilterMonth(e.target.value)}
+          />
+        </div>
+        <div className="col-span-1 sm:w-40">
           <Select
-            value={filterMember}
-            onChange={(e) => setFilterMember(e.target.value)}
-            className="w-full sm:w-44"
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value as 'all' | TransactionType)}
           >
-            <option value="all">Todos os membros</option>
-            {members.map((m) => (
-              <option key={m.user_id} value={m.user_id}>
-                {m.profile?.name || m.profile?.email || 'Sem nome'}
+            <option value="all">Todos os tipos</option>
+            <option value="income">Receitas</option>
+            <option value="expense">Despesas</option>
+          </Select>
+        </div>
+        <div className="col-span-2 sm:w-48">
+          <Select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value)}
+          >
+            <option value="all">Todas as categorias</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
               </option>
             ))}
           </Select>
+        </div>
+        {members.length > 1 && (
+          <div className="col-span-2 sm:w-44">
+            <Select
+              value={filterMember}
+              onChange={(e) => setFilterMember(e.target.value)}
+            >
+              <option value="all">Todos os membros</option>
+              {members.map((m) => (
+                <option key={m.user_id} value={m.user_id}>
+                  {m.profile?.name || m.profile?.email || 'Sem nome'}
+                </option>
+              ))}
+            </Select>
+          </div>
         )}
       </div>
 
