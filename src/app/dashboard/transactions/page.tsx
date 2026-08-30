@@ -17,6 +17,21 @@ import type { Category, Transaction, TransactionType, FamilyMember, Profile } fr
 
 type RecurrenceMode = 'none' | 'recurring' | 'installment';
 
+const MIN_INSTALLMENTS = 2;
+const MAX_INSTALLMENTS = 48;
+
+/**
+ * The installments field keeps the raw string while the user types, because
+ * clamping on every keystroke makes values below the minimum impossible to
+ * reach: typing "10" would snap "1" to "2" and end up as "20". Clamping only
+ * happens on blur.
+ */
+function clampInstallments(raw: string): number {
+  const parsed = parseInt(raw, 10);
+  if (Number.isNaN(parsed)) return MIN_INSTALLMENTS;
+  return Math.min(MAX_INSTALLMENTS, Math.max(MIN_INSTALLMENTS, parsed));
+}
+
 export default function TransactionsPage() {
   return (
     <Suspense>
@@ -60,7 +75,8 @@ function TransactionsContent() {
 
   // Recurrence / Installment state
   const [recurrenceMode, setRecurrenceMode] = useState<RecurrenceMode>('none');
-  const [totalInstallments, setTotalInstallments] = useState(2);
+  const [installmentsInput, setInstallmentsInput] = useState('2');
+  const totalInstallments = clampInstallments(installmentsInput);
 
   useEffect(() => {
     loadData();
@@ -166,7 +182,7 @@ function TransactionsContent() {
     setType('expense');
     setCategoryId(categories.find((c) => c.type === 'expense')?.id || '');
     setRecurrenceMode('none');
-    setTotalInstallments(2);
+    setInstallmentsInput('2');
     setModalOpen(true);
   }
 
@@ -182,7 +198,7 @@ function TransactionsContent() {
       setRecurrenceMode('recurring');
     } else if (t.total_installments && t.total_installments > 1) {
       setRecurrenceMode('installment');
-      setTotalInstallments(t.total_installments);
+      setInstallmentsInput(String(t.total_installments));
     } else {
       setRecurrenceMode('none');
     }
@@ -756,10 +772,13 @@ function TransactionsContent() {
                     id="installments"
                     label="Número de parcelas"
                     type="number"
-                    min={2}
-                    max={48}
-                    value={totalInstallments.toString()}
-                    onChange={(e) => setTotalInstallments(Math.max(2, Math.min(48, parseInt(e.target.value) || 2)))}
+                    inputMode="numeric"
+                    min={MIN_INSTALLMENTS}
+                    max={MAX_INSTALLMENTS}
+                    value={installmentsInput}
+                    onChange={(e) => setInstallmentsInput(e.target.value)}
+                    onBlur={() => setInstallmentsInput(String(totalInstallments))}
+                    onFocus={(e) => e.target.select()}
                     required
                   />
                   <p className="text-xs text-muted">
