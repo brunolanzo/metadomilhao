@@ -24,6 +24,42 @@ interface MonthlyData {
   expense: number;
 }
 
+/**
+ * PostgREST caps a single response at `max-rows` (1000 by default on Supabase).
+ * Any range wider than a month can exceed that and get silently truncated, so
+ * every aggregate query has to page through the full result set.
+ */
+const PAGE_SIZE = 1000;
+
+async function fetchAllTransactions<T>(
+  supabase: ReturnType<typeof createClient>,
+  familyId: string,
+  start: string,
+  end: string,
+  columns: string,
+): Promise<T[]> {
+  const all: T[] = [];
+
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from('transactions')
+      .select(columns)
+      .eq('family_id', familyId)
+      .gte('date', start)
+      .lte('date', end)
+      // Stable sort: without a tiebreaker, paging can skip or repeat rows.
+      .order('date', { ascending: false })
+      .order('id', { ascending: false })
+      .range(from, from + PAGE_SIZE - 1);
+
+    if (error || !data || data.length === 0) break;
+    all.push(...(data as T[]));
+    if (data.length < PAGE_SIZE) break;
+  }
+
+  return all;
+}
+
 export default function DashboardPage() {
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
@@ -74,13 +110,13 @@ export default function DashboardPage() {
     const familyId = membership.family_id;
 
     // Current month transactions
-    const { data: transactions } = await supabase
-      .from('transactions')
-      .select('*, category:categories(*)')
-      .eq('family_id', familyId)
-      .gte('date', start)
-      .lte('date', end)
-      .order('date', { ascending: false });
+    const transactions = await fetchAllTransactions<Transaction & { category: Category }>(
+      supabase,
+      familyId,
+      start,
+      end,
+      '*, category:categories(*)',
+    );
 
     if (transactions) {
       const inc = transactions
@@ -116,22 +152,43 @@ export default function DashboardPage() {
     }
 
     // Year data (Jan 1 to Dec 31 of current year)
-    const currentYear = new Date().getFullYear();
+    const now = new Date();
+    const currentYear = now.getFullYear();
     const yearStart = `${currentYear}-01-01`;
     const yearEnd = `${currentYear}-12-31`;
 
-    const { data: yearTransactions } = await supabase
-      .from('transactions')
-      .select('amount, type, date')
-      .eq('family_id', familyId)
-      .gte('date', yearStart)
-      .lte('date', yearEnd);
+    // The 6-month chart window can start in the previous year (e.g. in March it
+    // reaches back to October). Anchor each month on day 1 so setMonth-style
+    // overflow can't skip a short month when today is the 29th-31st.
+    const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const chartMonths = Array.from({ length: 6 }, (_, i) => {
+      const d = new Date(currentYear, now.getMonth() - (5 - i), 1);
+      return {
+        key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
+        label: monthNames[d.getMonth()],
+      };
+    });
+    const chartStart = `${chartMonths[0].key}-01`;
+
+    // Fetch wide enough to cover both the calendar year and the chart window.
+    const rangeStart = chartStart < yearStart ? chartStart : yearStart;
+
+    const yearTransactions = await fetchAllTransactions<Pick<Transaction, 'amount' | 'type' | 'date'>>(
+      supabase,
+      familyId,
+      rangeStart,
+      yearEnd,
+      'amount, type, date',
+    );
 
     if (yearTransactions) {
-      const yInc = yearTransactions
+      // Annual/YTD cards are calendar-year only — the chart window may reach further back.
+      const thisYear = yearTransactions.filter((t) => t.date >= yearStart);
+
+      const yInc = thisYear
         .filter((t) => t.type === 'income')
         .reduce((sum, t) => sum + Number(t.amount), 0);
-      const yExp = yearTransactions
+      const yExp = thisYear
         .filter((t) => t.type === 'expense')
         .reduce((sum, t) => sum + Number(t.amount), 0);
 
@@ -140,29 +197,22 @@ export default function DashboardPage() {
 
       // YTD (year-to-date: Jan 1 to end of current month)
       const ytdEnd = end; // current month end
-      const ytdInc = yearTransactions
+      const ytdInc = thisYear
         .filter((t) => t.type === 'income' && t.date <= ytdEnd)
         .reduce((sum, t) => sum + Number(t.amount), 0);
-      const ytdExp = yearTransactions
+      const ytdExp = thisYear
         .filter((t) => t.type === 'expense' && t.date <= ytdEnd)
         .reduce((sum, t) => sum + Number(t.amount), 0);
       setYtdIncome(ytdInc);
       setYtdExpense(ytdExp);
 
-      // Build monthly data from year transactions (covers 6-month chart)
-      const monthMap = new Map<string, MonthlyData>();
-      const monthNames = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-
-      for (let i = 0; i < 6; i++) {
-        const d = new Date();
-        d.setMonth(d.getMonth() - (5 - i));
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        monthMap.set(key, { month: monthNames[d.getMonth()], income: 0, expense: 0 });
-      }
+      // Build the 6-month chart
+      const monthMap = new Map<string, MonthlyData>(
+        chartMonths.map((m) => [m.key, { month: m.label, income: 0, expense: 0 }]),
+      );
 
       yearTransactions.forEach((t) => {
-        const key = t.date.substring(0, 7);
-        const entry = monthMap.get(key);
+        const entry = monthMap.get(t.date.substring(0, 7));
         if (entry) {
           if (t.type === 'income') entry.income += Number(t.amount);
           else entry.expense += Number(t.amount);
@@ -173,25 +223,25 @@ export default function DashboardPage() {
 
       // Build cumulative wealth evolution from monthly data
       let cumulative = 0;
-      const wealth = Array.from(monthMap.entries()).map(([, data]) => {
+      const wealth = Array.from(monthMap.values()).map((data) => {
         cumulative += data.income - data.expense;
         return { month: data.month, value: cumulative };
       });
       setWealthData(wealth);
     }
 
-    // Load previous month data for comparison
-    const prevMonth = new Date();
-    prevMonth.setMonth(prevMonth.getMonth() - 1);
-    const prevStart = toLocalDateString(new Date(prevMonth.getFullYear(), prevMonth.getMonth(), 1));
-    const prevEnd = toLocalDateString(new Date(prevMonth.getFullYear(), prevMonth.getMonth() + 1, 0));
+    // Load previous month data for comparison (day 1 anchored: on the 29th-31st
+    // a plain setMonth(-1) can land back on the current month).
+    const prevStart = toLocalDateString(new Date(currentYear, now.getMonth() - 1, 1));
+    const prevEnd = toLocalDateString(new Date(currentYear, now.getMonth(), 0));
 
-    const { data: prevTxs } = await supabase
-      .from('transactions')
-      .select('type, amount')
-      .eq('family_id', familyId)
-      .gte('date', prevStart)
-      .lte('date', prevEnd);
+    const prevTxs = await fetchAllTransactions<Pick<Transaction, 'type' | 'amount'>>(
+      supabase,
+      familyId,
+      prevStart,
+      prevEnd,
+      'type, amount',
+    );
 
     if (prevTxs) {
       setPrevIncome(prevTxs.filter((t) => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0));

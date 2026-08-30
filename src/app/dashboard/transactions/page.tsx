@@ -189,10 +189,18 @@ function TransactionsContent() {
     setModalOpen(true);
   }
 
+  /**
+   * Add months keeping the day of the month, clamped to the target month's last
+   * day. A plain setMonth() overflows (31/jan + 1 mês = 03/mar), which skips the
+   * short month entirely and puts two entries in the following one.
+   */
   function addMonths(dateStr: string, months: number): string {
     const d = new Date(dateStr + 'T12:00:00');
-    d.setMonth(d.getMonth() + months);
-    return toLocalDateString(d);
+    const targetMonth = d.getMonth() + months;
+    const lastDay = new Date(d.getFullYear(), targetMonth + 1, 0).getDate();
+    return toLocalDateString(
+      new Date(d.getFullYear(), targetMonth, Math.min(d.getDate(), lastDay)),
+    );
   }
 
   async function handleSave(e: React.FormEvent) {
